@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f7f5ff">
+<meta name="theme-color" content="#fdfbf7">
 <title>Select</title>
 
 <!-- PWA Manifest & Meta Tags -->
@@ -11,21 +11,33 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Select">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%237567e8%22/><text x=%2250%%22 y=%2254%%22 font-size=%2250%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22>🎲</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%238c6d53%22/><text x=%2250%%22 y=%2254%%22 font-size=%2250%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22>🎲</text></svg>">
 <link rel="manifest" id="manifestPlaceholder">
 
 <style>
-:root{--bg:#f7f5ff;--card:#fff;--text:#252332;--muted:#7b7888;--line:#e8e5f0;--accent:#7567e8;--soft:#efedff;--danger:#e45d72;--dangerbg:#fff0f5;--shadow:0 14px 40px rgba(55,45,100,.09);--r:22px}
+:root{
+  --bg: #fdfbf7;
+  --card: #ffffff;
+  --text: #3c3530;
+  --muted: #8c8279;
+  --line: #e6dfd5;
+  --accent: #8c6d53;
+  --soft: #f4efe9;
+  --danger: #b85c5c;
+  --dangerbg: #fae8e8;
+  --shadow: 0 14px 40px rgba(80, 65, 50, 0.06);
+  --r: 22px;
+}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif}
 button,input,select{font:inherit}button{cursor:pointer}.app{max-width:900px;margin:auto;padding:22px 16px 50px}
 header{margin:6px 0 18px;display:flex;justify-content:space-between;align-items:center}h1{font-size:29px;letter-spacing:-1.6px;margin:0 0 6px;font-weight:900}.sub{font-size:13px;color:var(--muted)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px;margin-bottom:14px}h2{font-size:17px;margin:0 0 15px}
-.topbar{display:flex;gap:9px;flex-wrap:wrap}.select,.input{height:48px;border:1px solid #ddd9e8;border-radius:14px;background:#fff;padding:0 13px;outline:0}.select:focus,.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #7567e81a}.set-select{flex:1;min-width:190px}.btn{min-height:44px;padding:0 15px;border:0;border-radius:13px;background:#f0eef5;color:#393645;font-weight:800}.btn.primary{background:var(--accent);color:#fff}.btn.danger{background:var(--dangerbg);color:var(--danger)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.topbar{display:flex;gap:9px;flex-wrap:wrap}.select,.input{height:48px;border:1px solid #dcd3c7;border-radius:14px;background:#fff;padding:0 13px;outline:0;color:var(--text)}.select:focus,.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #8c6d531a}.set-select{flex:1;min-width:190px}.btn{min-height:44px;padding:0 15px;border:0;border-radius:13px;background:#f4efe9;color:#4a4038;font-weight:800}.btn.primary{background:var(--accent);color:#fff}.btn.danger{background:var(--dangerbg);color:var(--danger)}.btn:disabled{opacity:.5;cursor:not-allowed}
 .mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mode{padding:18px;border:1.5px solid var(--line);border-radius:18px;background:#fff;text-align:left}.mode.active{border-color:var(--accent);background:var(--soft)}.mode .title{font-weight:900}.mode .desc{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
-.big-result{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(145deg,#fff,#faf9ff);border-radius:20px;border:1px solid var(--line)}.result-label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:9px}.result-text{font-size:36px;font-weight:950;letter-spacing:-1.8px;padding:0 18px}.result-sub{font-size:13px;color:var(--muted);margin-top:9px}.count{font-size:90px;color:var(--accent);font-weight:950}
+.big-result{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(145deg,#fff,#faf7f2);border-radius:20px;border:1px solid var(--line)}.result-label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:9px}.result-text{font-size:36px;font-weight:950;letter-spacing:-1.8px;padding:0 18px}.result-sub{font-size:13px;color:var(--muted);margin-top:9px}.count{font-size:90px;color:var(--accent);font-weight:950}
 .main-actions{display:flex;gap:9px;margin-top:13px}.main-actions .btn{flex:1;height:52px}.status{text-align:center;font-size:12px;color:var(--muted);min-height:18px;margin-top:11px}
-.items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.item{padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:#fff;display:flex;justify-content:space-between;gap:8px}.item.removed{background:#f5f3f8;color:#aaa7b2;text-decoration:line-through}.name{font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.state{font-size:11px;font-weight:800;color:var(--accent)}.counter{font-size:12px;color:var(--muted);font-weight:800}
-.modal-back{position:fixed;inset:0;background:#25223266;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal-back.show{display:flex}.modal{width:min(620px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:24px;padding:20px;box-shadow:0 25px 80px #201c3b30}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal-title{font-size:20px;font-weight:900}.manage-row{display:flex;gap:8px;margin-bottom:10px}.manage-row .input{flex:1}.set-card{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:8px}.set-name{font-weight:850}.set-count{font-size:11px;color:var(--muted);margin-top:3px}.set-actions{display:flex;gap:6px}.small{min-height:40px;padding:0 11px;border:0;border-radius:11px;background:#f1eff6;font-weight:800;color:#55515f}.edit-list{display:flex;flex-direction:column;gap:8px}.edit-item{display:grid;grid-template-columns:1fr auto;gap:7px}.empty{text-align:center;padding:30px;color:var(--muted);background:#faf9fc;border-radius:16px}
+.items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.item{padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:#fff;display:flex;justify-content:space-between;gap:8px}.item.removed{background:#f4f0eb;color:#b0a499;text-decoration:line-through}.name{font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.state{font-size:11px;font-weight:800;color:var(--accent)}.counter{font-size:12px;color:var(--muted);font-weight:800}
+.modal-back{position:fixed;inset:0;background:#3c353066;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal-back.show{display:flex}.modal{width:min(620px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:24px;padding:20px;box-shadow:0 25px 80px rgba(80,65,50,0.2)}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal-title{font-size:20px;font-weight:900}.manage-row{display:flex;gap:8px;margin-bottom:10px}.manage-row .input{flex:1}.set-card{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:8px}.set-name{font-weight:850}.set-count{font-size:11px;color:var(--muted);margin-top:3px}.set-actions{display:flex;gap:6px}.small{min-height:40px;padding:0 11px;border:0;border-radius:11px;background:#f4efe9;font-weight:800;color:#5a4e44}.edit-list{display:flex;flex-direction:column;gap:8px}.edit-item{display:grid;grid-template-columns:1fr auto;gap:7px}.empty{text-align:center;padding:30px;color:var(--muted);background:#f9f6f2;border-radius:16px}
 #installBtn{display:none}
 @media(max-width:620px){.app{padding:15px 12px 36px}h1{font-size:25px}.card{padding:16px}.mode-grid,.items{grid-template-columns:1fr}.topbar{display:grid;grid-template-columns:1fr 1fr}.set-select{grid-column:1/-1}.main-actions{flex-direction:column}.set-card{align-items:flex-start;flex-direction:column}.set-actions{width:100%}.set-actions .small{flex:1}.result-text{font-size:29px}}
 </style>
@@ -61,7 +73,7 @@ header{margin:6px 0 18px;display:flex;justify-content:space-between;align-items:
 <div class="result-sub" id="resultSub"></div>
 </div>
 <div class="main-actions">
-<button class="btn primary" id="pickBtn">🎲 강제 선택</button>
+<button class="btn primary" id="pickBtn">🎲 선택하기</button>
 <button class="btn" id="resetRemoved" style="display:none">↺ 제거 항목 초기화</button>
 </div>
 <div class="status" id="status"></div>
@@ -84,17 +96,16 @@ header{margin:6px 0 18px;display:flex;justify-content:space-between;align-items:
 (function(){
 "use strict";
 
-// --- PWA Setup (Dynamic Manifest & Service Worker) ---
 const manifestData = {
   name: "Select Picker",
   short_name: "Select",
   start_url: window.location.pathname,
   display: "standalone",
-  background_color: "#f7f5ff",
-  theme_color: "#f7f5ff",
+  background_color: "#fdfbf7",
+  theme_color: "#fdfbf7",
   icons: [
     {
-      src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 rx=%22110%22 fill=%22%237567e8%22/><text x=%2250%%22 y=%2254%%22 font-size=%22260%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22>🎲</text></svg>",
+      src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 rx=%22110%22 fill=%22%238c6d53%22/><text x=%2250%%22 y=%2254%%22 font-size=%22260%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22>🎲</text></svg>",
       sizes: "512x512",
       type: "image/svg+xml"
     }
@@ -103,7 +114,6 @@ const manifestData = {
 const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
 document.getElementById('manifestPlaceholder').href = URL.createObjectURL(blob);
 
-// Service Worker Registration for Offline / PWA Support
 if ('serviceWorker' in navigator) {
   const swCode = `
     self.addEventListener('install', e => { self.skipWaiting(); });
@@ -115,7 +125,6 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register(swUrl).catch(err => console.log('SW registration failed:', err));
 }
 
-// PWA Install Prompt Handling
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
@@ -134,8 +143,7 @@ document.getElementById('installBtn')?.addEventListener('click', async () => {
   deferredPrompt = null;
 });
 
-// --- App Core Logic ---
-const KEY="select_picker_v4";
+const KEY="select_picker_v5";
 const $=id=>document.getElementById(id);
 const uid=()=>Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,10);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
@@ -143,23 +151,38 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&
 let db;
 try{db=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){db=null}
 if(!db || !Array.isArray(db.sets) || !db.sets.length){
-  const first={id:uid(),name:"A세트",items:["카페 가기","도서관 가기","운동장 가기"]};
-  db={sets:[first],active:first.id};
+  const first={id:uid(),name:"A세트",items:["카페 가기","도서관 가기","운동장 가기"],removed:[]};
+  db={sets:[first],active:first.id,mode:"random"};
 }
 if(!db.sets.some(s=>s.id===db.active)) db.active=db.sets[0].id;
+if(!db.mode) db.mode="random";
 
-let mode="random";
-let removed=new Set();
+let mode=db.mode;
 let busy=false;
 
 function save(){
+  db.mode=mode;
   try{localStorage.setItem(KEY,JSON.stringify(db))}
   catch(e){alert("브라우저 저장 기능을 사용할 수 없습니다.")}
 }
 function active(){return db.sets.find(s=>s.id===db.active)||db.sets[0]}
 
+function getRemovedSet(){
+  const s=active();
+  if(!s.removed) s.removed=[];
+  return new Set(s.removed);
+}
+
+function setRemovedSet(remSet){
+  const s=active();
+  s.removed=Array.from(remSet);
+  save();
+}
+
 function resetResult(){
-  removed=mode==="remove"?removed:new Set();
+  if(mode!=="remove"){
+    setRemovedSet(new Set());
+  }
   $("resultLabel").textContent="준비 완료";
   $("resultText").textContent="버튼을 눌러 선택하세요";
   $("resultSub").textContent="";
@@ -168,20 +191,22 @@ function resetResult(){
 
 function render(){
   const s=active();
+  const rem=getRemovedSet();
+
   $("setSelect").innerHTML=db.sets.map(x=>
     '<option value="'+esc(x.id)+'">'+esc(x.name)+" · "+x.items.length+"개</option>"
   ).join("");
   $("setSelect").value=s.id;
 
-  const alive=s.items.map((_,i)=>i).filter(i=>!removed.has(i));
+  const alive=s.items.map((_,i)=>i).filter(i=>!rem.has(i));
   $("itemCount").textContent=(mode==="remove"?"남은 "+alive.length+"개 · ":"")+"전체 "+s.items.length+"개";
 
   $("items").innerHTML=s.items.length
-    ? s.items.map((x,i)=>'<div class="item '+(removed.has(i)?"removed":"")+'"><span class="name">'+esc(x)+'</span><span class="state">'+(removed.has(i)?"제거됨":"")+"</span></div>").join("")
+    ? s.items.map((x,i)=>'<div class="item '+(rem.has(i)?"removed":"")+'"><span class="name">'+esc(x)+'</span><span class="state">'+(rem.has(i)?"제거됨":"")+"</span></div>").join("")
     : '<div class="empty" style="grid-column:1/-1">이 세트에는 항목이 없습니다.</div>';
 
-  $("resetRemoved").style.display=(mode==="remove" && removed.size)?"block":"none";
-  $("pickBtn").textContent=mode==="random"?"🎲 강제 선택":"✂️ 다음 선택";
+  $("resetRemoved").style.display=(mode==="remove" && rem.size)?"block":"none";
+  $("pickBtn").textContent="🎲 선택하기";
   $("modeRandom").classList.toggle("active",mode==="random");
   $("modeRemove").classList.toggle("active",mode==="remove");
 }
@@ -189,8 +214,11 @@ function render(){
 function setMode(m){
   if(busy)return;
   mode=m;
-  removed=new Set();
+  if(mode!=="remove"){
+    setRemovedSet(new Set());
+  }
   resetResult();
+  save();
   render();
 }
 
@@ -199,7 +227,8 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function pick(){
   if(busy)return;
   const s=active();
-  const pool=s.items.map((_,i)=>i).filter(i=>mode==="random" || !removed.has(i));
+  const rem=getRemovedSet();
+  const pool=s.items.map((_,i)=>i).filter(i=>mode==="random" || !rem.has(i));
 
   if(!pool.length){
     $("status").textContent="선택할 항목이 없습니다.";
@@ -221,14 +250,15 @@ async function pick(){
   $("resultText").textContent=s.items[index];
 
   if(mode==="remove"){
-    removed.add(index);
+    rem.add(index);
+    setRemovedSet(rem);
     $("resultSub").textContent="이번 선택은 제거되었습니다.";
   }else{
     $("resultSub").textContent="랜덤으로 선택되었습니다.";
   }
 
   render();
-  if(mode==="remove" && s.items.length-removed.size===1)
+  if(mode==="remove" && s.items.length-rem.size===1)
     $("status").textContent="이제 마지막 1개가 남았습니다.";
 
   busy=false;
@@ -252,12 +282,11 @@ function newSet(){
   const create=()=>{
     const name=input.value.trim();
     if(!name){input.focus();return}
-    const s={id:uid(),name,items:[]};
+    const s={id:uid(),name,items:[],removed:[]};
     db.sets.push(s);
     db.active=s.id;
     save();
     mode="random";
-    removed=new Set();
     render();
     closeModal();
     openItems(s.id);
@@ -280,12 +309,11 @@ function openSets(){
   const add=()=>{
     const name=input.value.trim();
     if(!name){input.focus();return}
-    const s={id:uid(),name,items:[]};
+    const s={id:uid(),name,items:[],removed:[]};
     db.sets.push(s);
     db.active=s.id;
     save();
     mode="random";
-    removed=new Set();
     render();
     closeModal();
     openItems(s.id);
@@ -328,9 +356,9 @@ function openItems(id){
     const value=input.value.trim();
     if(!value){input.focus();return}
     s.items.push(value);
+    s.removed=[];
     save();
     input.value="";
-    removed=new Set();
     render();
     renderEditList(id);
     input.focus();
@@ -365,7 +393,7 @@ function renderEditList(id){
   list.querySelectorAll("[data-del-item]").forEach(btn=>{
     btn.onclick=()=>{
       s.items.splice(Number(btn.dataset.delItem),1);
-      removed=new Set();
+      s.removed=[];
       save();render();renderEditList(id);
     };
   });
@@ -373,7 +401,6 @@ function renderEditList(id){
 
 $("setSelect").onchange=e=>{
   db.active=e.target.value;
-  removed=new Set();
   resetResult();
   save();render();
 };
@@ -383,7 +410,7 @@ $("modeRemove").onclick=()=>setMode("remove");
 $("pickBtn").onclick=pick;
 
 $("resetRemoved").onclick=()=>{
-  removed=new Set();
+  setRemovedSet(new Set());
   resetResult();
   render();
   $("status").textContent="제거된 항목을 모두 되돌렸습니다.";
@@ -404,7 +431,6 @@ $("modalBody").addEventListener("click",e=>{
 
   if(btn.dataset.action==="load"){
     db.active=id;
-    removed=new Set();
     resetResult();
     save();render();closeModal();
   }
@@ -427,7 +453,6 @@ $("modalBody").addEventListener("click",e=>{
     if(confirm('"'+s.name+'" 세트를 삭제할까요?')){
       db.sets=db.sets.filter(x=>x.id!==id);
       if(db.active===id)db.active=db.sets[0].id;
-      removed=new Set();
       save();render();renderSetList();
     }
   }
