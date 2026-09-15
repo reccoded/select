@@ -39,6 +39,13 @@ header{margin:6px 0 18px;display:flex;justify-content:space-between;align-items:
 .items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.item{padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:#fff;display:flex;justify-content:space-between;gap:8px}.item.removed{background:#f4f0eb;color:#b0a499;text-decoration:line-through}.name{font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.state{font-size:11px;font-weight:800;color:var(--accent)}.counter{font-size:12px;color:var(--muted);font-weight:800}
 .modal-back{position:fixed;inset:0;background:#3c353066;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal-back.show{display:flex}.modal{width:min(620px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:24px;padding:20px;box-shadow:0 25px 80px rgba(80,65,50,0.2)}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal-title{font-size:20px;font-weight:900}.manage-row{display:flex;gap:8px;margin-bottom:10px}.manage-row .input{flex:1}.set-card{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:8px}.set-name{font-weight:850}.set-count{font-size:11px;color:var(--muted);margin-top:3px}.set-actions{display:flex;gap:6px}.small{min-height:40px;padding:0 11px;border:0;border-radius:11px;background:#f4efe9;font-weight:800;color:#5a4e44}.edit-list{display:flex;flex-direction:column;gap:8px}.edit-item{display:grid;grid-template-columns:1fr auto;gap:7px}.empty{text-align:center;padding:30px;color:var(--muted);background:#f9f6f2;border-radius:16px}
 #installBtn{display:none}
+.hero-card{padding:16px;background:linear-gradient(145deg,#fff,#f8f2ea);border-color:#ddd1c2}
+.hero-meta{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-bottom:12px}.chip{font-size:11px;font-weight:850;color:var(--accent);background:#fff;border:1px solid #e4d9cd;border-radius:999px;padding:6px 9px}
+.hero-card .big-result{min-height:185px;border:0;background:transparent}.hero-card .main-actions .btn.primary{height:58px;font-size:17px;box-shadow:0 9px 22px rgba(140,109,83,.18)}
+.segment{display:grid;grid-template-columns:1fr 1fr;padding:5px;background:var(--soft);border:1px solid var(--line);border-radius:16px;gap:5px}.segment .mode{padding:12px 14px;border:0;border-radius:12px;background:transparent;text-align:center}.segment .mode.active{background:#fff;box-shadow:0 4px 14px rgba(80,65,50,.08);color:var(--accent)}.segment .mode .desc{display:none}.mode-help{font-size:12px;color:var(--muted);text-align:center;margin-top:9px}
+.compact-card{padding:15px 17px}.compact-card h2{font-size:14px;margin-bottom:10px;color:var(--muted)}.compact-card .topbar{align-items:center}.compact-card .select{height:44px}
+.items-card{padding:15px 17px}.items-card h2{font-size:14px;margin-bottom:10px}.items{gap:7px}.item{padding:10px 12px;border-radius:12px;font-size:13px}
+.backup-card{padding:15px 17px}.backup-row{display:flex;gap:8px;flex-wrap:wrap}.backup-row .btn{flex:1;min-width:150px}.backup-note{font-size:11px;color:var(--muted);line-height:1.55;margin-top:9px}
 @media(max-width:620px){.app{padding:15px 12px 36px}h1{font-size:25px}.card{padding:16px}.mode-grid,.items{grid-template-columns:1fr}.topbar{display:grid;grid-template-columns:1fr 1fr}.set-select{grid-column:1/-1}.main-actions{flex-direction:column}.set-card{align-items:flex-start;flex-direction:column}.set-actions{width:100%}.set-actions .small{flex:1}.result-text{font-size:29px}}
 </style>
 </head>
@@ -49,28 +56,12 @@ header{margin:6px 0 18px;display:flex;justify-content:space-between;align-items:
   <button class="btn primary" id="installBtn">📱 앱 설치</button>
 </header>
 
-<section class="card">
-<h2>선택 세트</h2>
-<div class="topbar">
-<select id="setSelect" class="select set-select"></select>
-<button class="btn" id="manageSets">세트 관리</button>
-<button class="btn primary" id="newSet">＋ 새 세트</button>
-</div>
-</section>
-
-<section class="card">
-<h2>선택 방식</h2>
-<div class="mode-grid">
-<button class="mode active" id="modeRandom"><div class="title">🎲 랜덤 선택</div><div class="desc">전체 항목에서 매번 무작위로 선택합니다.</div></button>
-<button class="mode" id="modeRemove"><div class="title">✂️ 하나씩 제거</div><div class="desc">뽑힌 항목을 제거하고 마지막 1개까지 이어갑니다.</div></button>
-</div>
-</section>
-
-<section class="card">
+<section class="card hero-card">
+<div class="hero-meta"><span class="chip" id="heroSet">세트</span><span class="chip" id="heroMode">🎲 랜덤 선택</span></div>
 <div class="big-result">
-<div class="result-label" id="resultLabel">준비 완료</div>
-<div class="result-text" id="resultText">버튼을 눌러 선택하세요</div>
-<div class="result-sub" id="resultSub"></div>
+<div class="result-label" id="resultLabel">오늘의 결정</div>
+<div class="result-text" id="resultText">결정이 필요하신가요?</div>
+<div class="result-sub" id="resultSub">고민은 여기까지.</div>
 </div>
 <div class="main-actions">
 <button class="btn primary" id="pickBtn">🎲 선택하기</button>
@@ -79,9 +70,37 @@ header{margin:6px 0 18px;display:flex;justify-content:space-between;align-items:
 <div class="status" id="status"></div>
 </section>
 
-<section class="card">
+<section class="card compact-card">
+<h2>선택 방식</h2>
+<div class="segment">
+<button class="mode active" id="modeRandom"><div class="title">🎲 랜덤 선택</div><div class="desc">전체 항목에서 매번 무작위로 선택합니다.</div></button>
+<button class="mode" id="modeRemove"><div class="title">✂️ 하나씩 제거</div><div class="desc">뽑힌 항목을 제거하고 마지막 1개까지 이어갑니다.</div></button>
+</div>
+<div class="mode-help" id="modeHelp">전체 항목에서 매번 무작위로 하나를 고릅니다.</div>
+</section>
+
+<section class="card compact-card">
+<h2>선택 세트</h2>
+<div class="topbar">
+<select id="setSelect" class="select set-select"></select>
+<button class="btn" id="manageSets">세트 관리</button>
+<button class="btn primary" id="newSet">＋ 새 세트</button>
+</div>
+</section>
+
+<section class="card items-card">
 <h2>현재 항목 <span id="itemCount" class="counter"></span></h2>
 <div id="items" class="items"></div>
+</section>
+
+<section class="card backup-card">
+<h2>프리셋 백업</h2>
+<div class="backup-row">
+<button class="btn" id="exportBackup">⇩ 프리셋 내보내기</button>
+<button class="btn" id="importBackup">⇧ 프리셋 가져오기</button>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+</div>
+<div class="backup-note">선택 세트와 항목, 선택 방식만 JSON 파일로 저장합니다. 다른 기기에서 가져오면 현재 프리셋을 백업 파일의 내용으로 교체합니다.</div>
 </section>
 </div>
 
@@ -183,9 +202,9 @@ function resetResult(){
   if(mode!=="remove"){
     setRemovedSet(new Set());
   }
-  $("resultLabel").textContent="준비 완료";
-  $("resultText").textContent="버튼을 눌러 선택하세요";
-  $("resultSub").textContent="";
+  $("resultLabel").textContent="오늘의 결정";
+  $("resultText").textContent="결정이 필요하신가요?";
+  $("resultSub").textContent="고민은 여기까지.";
   $("status").textContent="";
 }
 
@@ -197,6 +216,9 @@ function render(){
     '<option value="'+esc(x.id)+'">'+esc(x.name)+" · "+x.items.length+"개</option>"
   ).join("");
   $("setSelect").value=s.id;
+  $("heroSet").textContent=s.name+" · "+s.items.length+"개";
+  $("heroMode").textContent=mode==="remove"?"✂️ 하나씩 제거":"🎲 랜덤 선택";
+  $("modeHelp").textContent=mode==="remove"?"뽑힌 항목을 하나씩 제외해 마지막 1개까지 좁힙니다.":"전체 항목에서 매번 무작위로 하나를 고릅니다.";
 
   const alive=s.items.map((_,i)=>i).filter(i=>!rem.has(i));
   $("itemCount").textContent=(mode==="remove"?"남은 "+alive.length+"개 · ":"")+"전체 "+s.items.length+"개";
@@ -246,15 +268,15 @@ async function pick(){
   }
 
   const index=pool[Math.floor(Math.random()*pool.length)];
-  $("resultLabel").textContent="결과";
+  $("resultLabel").textContent="결정 완료";
   $("resultText").textContent=s.items[index];
 
   if(mode==="remove"){
     rem.add(index);
     setRemovedSet(rem);
-    $("resultSub").textContent="이번 선택은 제거되었습니다.";
+    $("resultSub").textContent="이 선택지는 제외했습니다. 계속 좁혀볼까요?";
   }else{
-    $("resultSub").textContent="랜덤으로 선택되었습니다.";
+    $("resultSub").textContent="결정 완료. 고민 끝.";
   }
 
   render();
@@ -398,6 +420,52 @@ function renderEditList(id){
     };
   });
 }
+
+function exportBackup(){
+  const payload={
+    app:"Select",
+    version:1,
+    exportedAt:new Date().toISOString(),
+    presets:{sets:db.sets,active:db.active,mode:mode}
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const stamp=new Date().toISOString().slice(0,10).replaceAll("-","");
+  a.href=url;a.download="Select_presets_"+stamp+".json";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  $("status").textContent="프리셋 백업 파일을 만들었습니다.";
+}
+
+function importBackupFile(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      const p=data && data.presets;
+      if(!p || !Array.isArray(p.sets) || !p.sets.length) throw new Error("invalid");
+      const cleanSets=p.sets.map(s=>({
+        id:String(s.id||uid()),
+        name:String(s.name||"이름 없는 세트"),
+        items:Array.isArray(s.items)?s.items.map(x=>String(x)):[],
+        removed:[]
+      }));
+      if(!confirm("현재 프리셋을 백업 파일의 내용으로 교체할까요?"))return;
+      db.sets=cleanSets;
+      db.active=cleanSets.some(s=>s.id===p.active)?p.active:cleanSets[0].id;
+      mode=p.mode==="remove"?"remove":"random";
+      save();resetResult();render();
+      $("status").textContent="프리셋을 가져왔습니다.";
+    }catch(e){alert("올바른 Select 프리셋 백업 파일이 아닙니다.");}
+    $("importFile").value="";
+  };
+  reader.readAsText(file);
+}
+
+$("exportBackup").onclick=exportBackup;
+$("importBackup").onclick=()=>$("importFile").click();
+$("importFile").onchange=e=>importBackupFile(e.target.files[0]);
 
 $("setSelect").onchange=e=>{
   db.active=e.target.value;
