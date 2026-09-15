@@ -1,788 +1,533 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f4ead8">
-<title>Q & A</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fdfbf7">
+<title>Select</title>
+
+<!-- PWA Manifest & Meta Tags -->
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="On It">
+<meta name="apple-mobile-web-app-title" content="Select">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%238c6d53%22/><text x=%2250%%22 y=%2254%%22 font-size=%2250%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22>🎲</text></svg>">
+<link rel="manifest" id="manifestPlaceholder">
+
 <style>
-  :root{
-    --bg:#f3eadb;
-    --paper:#fffaf0;
-    --paper2:#f8f0e3;
-    --ink:#3f342b;
-    --muted:#88786a;
-    --line:#ded0bd;
-    --accent:#c96f52;
-    --accent-dark:#a9573e;
-    --soft:#ead9c3;
-    --shadow:0 14px 35px rgba(77,55,35,.10);
-    --radius:22px;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;min-height:100%;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;color:var(--ink);background:var(--bg)}
-  body{overflow-x:hidden}
-  button,input,textarea{font:inherit}
-  button{cursor:pointer}
-  .app{min-height:100vh;display:flex}
-  .sidebar{
-    width:260px;padding:28px 18px 20px;border-right:1px solid rgba(92,69,48,.13);
-    background:rgba(255,250,240,.55);backdrop-filter:blur(12px);display:flex;flex-direction:column;
-  }
-  .brand{padding:4px 12px 24px}
-  .brand-title{font-family:Georgia,"Times New Roman",serif;font-size:31px;font-weight:700;letter-spacing:-1px}
-  .brand-sub{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.5}
-  .nav{display:grid;gap:7px}
-  .nav button,.mobile-nav button{
-    border:0;background:transparent;color:var(--ink);text-align:left;padding:13px 14px;border-radius:14px;
-    transition:.18s ease;font-weight:650
-  }
-  .nav button:hover,.mobile-nav button:hover{background:rgba(234,217,195,.6)}
-  .nav button.active{background:var(--ink);color:#fffaf0}
-  .side-bottom{margin-top:auto;padding:14px 12px 0;color:var(--muted);font-size:11px;line-height:1.6}
-  .main{flex:1;min-width:0}
-  .topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 34px}
-  .mobile-menu{display:none}
-  .mobile-tabs{display:none}
-  .view{max-width:980px;margin:0 auto;padding:22px 34px 60px}
-  .hero{margin:20px 0 28px}
-  .eyebrow{font-size:12px;letter-spacing:.12em;color:var(--accent-dark);font-weight:800;text-transform:uppercase}
-  h1{font-family:Georgia,"Times New Roman",serif;font-size:42px;line-height:1.15;margin:8px 0 8px;letter-spacing:-1.5px}
-  .intro{color:var(--muted);margin:0;line-height:1.7}
-  .question-card{
-    position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
-    padding:34px 52px 30px;box-shadow:var(--shadow);height:420px;display:flex;flex-direction:column;
-    overflow:hidden;
-  }
-  .question-card:before{
-    content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;
-    background-image:linear-gradient(rgba(118,86,55,.08) 1px,transparent 1px);background-size:100% 34px;
-  }
-  .card-inner{position:relative;z-index:1;display:flex;flex-direction:column;flex:1;min-height:0}
-  .question-area{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;overflow:auto;padding:8px 0}
-  .category-pill{
-    display:inline-flex;align-items:center;gap:7px;background:var(--soft);color:var(--accent-dark);
-    border-radius:999px;padding:7px 12px;font-size:13px;font-weight:800
-  }
-  .question{
-    font-family:Georgia,"Noto Serif KR",serif;font-size:31px;line-height:1.55;letter-spacing:-.7px;
-    margin:25px 0 32px;word-break:keep-all
-  }
-  .card-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;flex:0 0 auto;margin-top:14px}
-  .heart{
-    width:48px;height:48px;border:1px solid var(--line);border-radius:50%;background:#fffdf7;
-    color:var(--muted);font-size:22px;display:grid;place-items:center;transition:.18s ease
-  }
-  .heart:hover{transform:translateY(-2px);border-color:var(--accent)}
-  .heart.fav{color:var(--accent);border-color:#e2aa98;background:#fff0e9}
-  .primary{
-    border:0;border-radius:14px;padding:12px 17px;background:var(--ink);color:#fffaf0;font-weight:800;
-    transition:.18s ease
-  }
-  .primary:hover{transform:translateY(-1px);background:#2f2822}
-  .secondary{
-    border:1px solid var(--line);border-radius:14px;padding:11px 15px;background:var(--paper);color:var(--ink);font-weight:700
-  }
-  .toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:22px 0}
-  .chip{
-    border:1px solid var(--line);background:rgba(255,250,240,.7);color:var(--ink);padding:9px 13px;border-radius:999px;
-    font-size:13px;font-weight:700
-  }
-  .chip:hover{border-color:var(--accent)}
-  .panel{background:rgba(255,250,240,.72);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 8px 25px rgba(77,55,35,.05)}
-  .panel-title{font-weight:850;font-size:18px;margin-bottom:14px}
-  .category-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-  .cat-card{border:1px solid var(--line);background:var(--paper);border-radius:17px;padding:18px;text-align:left}
-  .cat-card strong{display:block;font-size:16px;margin-bottom:5px}
-  .cat-card span{color:var(--muted);font-size:12px}
-  .list{display:grid;gap:10px}
-  .item{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:15px}
-  .item-main{flex:1;min-width:0}
-  .item-cat{font-size:11px;color:var(--accent-dark);font-weight:850;margin-bottom:5px}
-  .item-text{line-height:1.55;word-break:keep-all}
-  .item-actions{display:flex;gap:6px}
-  .icon-btn{border:1px solid var(--line);background:#fffdf7;border-radius:10px;padding:7px 9px;color:var(--muted)}
-  .empty{text-align:center;padding:45px 20px;color:var(--muted)}
-  .form-grid{display:grid;gap:14px}
-  label{font-size:12px;font-weight:850;color:var(--muted)}
-  select,input,textarea{
-    width:100%;border:1px solid var(--line);border-radius:12px;background:#fffdf7;color:var(--ink);padding:12px 13px;outline:none
-  }
-  textarea{min-height:110px;resize:vertical;line-height:1.55}
-  select:focus,input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(201,111,82,.12)}
-  .form-row{display:grid;grid-template-columns:1fr auto;gap:10px}
-  .category-row{display:flex;gap:8px;align-items:center;margin-top:10px}
-  .category-row input{flex:1}
-  .small{font-size:11px;color:var(--muted)}
-  .hidden{display:none!important}
-  .toast{
-    position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
-    background:var(--ink);color:#fffaf0;padding:11px 15px;border-radius:12px;font-size:13px;transition:.2s;z-index:50
-  }
-  .toast.show{opacity:1;transform:translate(-50%,0)}
-  @media(max-width:760px){
-    .app{display:block}
-    .sidebar{display:none}
-    .topbar{height:auto;min-height:58px;padding:8px 12px;border-bottom:1px solid rgba(92,69,48,.12);position:sticky;top:0;z-index:40;background:rgba(243,234,219,.94);backdrop-filter:blur(12px)}
-    .mobile-menu{display:none}
-  .mobile-tabs{display:none}
-    .mobile-tabs{display:flex;width:100%;gap:5px;align-items:center;overflow-x:auto;scrollbar-width:none}
-    .mobile-tabs::-webkit-scrollbar{display:none}
-    .mobile-tabs button{flex:0 0 auto;border:0;background:transparent;color:var(--ink);padding:9px 10px;border-radius:11px;font-size:12px;font-weight:800;white-space:nowrap}
-    .mobile-tabs button.active{background:var(--ink);color:#fffaf0}
-    .mobile-brand{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:800;margin-right:3px;white-space:nowrap}
-    .view{padding:18px 16px 45px}
-    h1{font-size:32px}
-    .hero{margin-top:10px}
-    .question-card{padding:24px 23px 20px;height:390px}
-    .question{font-size:25px;line-height:1.55;margin:22px 0 28px}
-    .card-actions{align-items:flex-end}
-    .toolbar{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
-    .toolbar::-webkit-scrollbar{display:none}
-    .chip{flex:0 0 auto;white-space:nowrap}
-    .category-grid{grid-template-columns:1fr 1fr}
-  }
-  @media(max-width:430px){
-    .category-grid{grid-template-columns:1fr}
-    .question-card{height:370px}
-    .question{font-size:23px}
-  }
+:root{
+  --bg: #fdfbf7;
+  --card: #ffffff;
+  --text: #3c3530;
+  --muted: #8c8279;
+  --line: #e6dfd5;
+  --accent: #8c6d53;
+  --soft: #f4efe9;
+  --danger: #b85c5c;
+  --dangerbg: #fae8e8;
+  --shadow: 0 14px 40px rgba(80, 65, 50, 0.06);
+  --r: 22px;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.app{max-width:900px;margin:auto;padding:22px 16px 50px}
+header{margin:6px 0 18px;display:flex;justify-content:space-between;align-items:center}h1{font-size:29px;letter-spacing:-1.6px;margin:0 0 6px;font-weight:900}.sub{font-size:13px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:20px;margin-bottom:14px}h2{font-size:17px;margin:0 0 15px}
+.topbar{display:flex;gap:9px;flex-wrap:wrap}.select,.input{height:48px;border:1px solid #dcd3c7;border-radius:14px;background:#fff;padding:0 13px;outline:0;color:var(--text)}.select:focus,.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #8c6d531a}.set-select{flex:1;min-width:190px}.btn{min-height:44px;padding:0 15px;border:0;border-radius:13px;background:#f4efe9;color:#4a4038;font-weight:800}.btn.primary{background:var(--accent);color:#fff}.btn.danger{background:var(--dangerbg);color:var(--danger)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mode{padding:18px;border:1.5px solid var(--line);border-radius:18px;background:#fff;text-align:left}.mode.active{border-color:var(--accent);background:var(--soft)}.mode .title{font-weight:900}.mode .desc{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+.big-result{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(145deg,#fff,#faf7f2);border-radius:20px;border:1px solid var(--line)}.result-label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:9px}.result-text{font-size:36px;font-weight:950;letter-spacing:-1.8px;padding:0 18px}.result-sub{font-size:13px;color:var(--muted);margin-top:9px}.count{font-size:90px;color:var(--accent);font-weight:950}
+.main-actions{display:flex;gap:9px;margin-top:13px}.main-actions .btn{flex:1;height:52px}.status{text-align:center;font-size:12px;color:var(--muted);min-height:18px;margin-top:11px}
+.items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.item{padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:#fff;display:flex;justify-content:space-between;gap:8px}.item.removed{background:#f4f0eb;color:#b0a499;text-decoration:line-through}.name{font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.state{font-size:11px;font-weight:800;color:var(--accent)}.counter{font-size:12px;color:var(--muted);font-weight:800}
+.modal-back{position:fixed;inset:0;background:#3c353066;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal-back.show{display:flex}.modal{width:min(620px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:24px;padding:20px;box-shadow:0 25px 80px rgba(80,65,50,0.2)}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal-title{font-size:20px;font-weight:900}.manage-row{display:flex;gap:8px;margin-bottom:10px}.manage-row .input{flex:1}.set-card{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:8px}.set-name{font-weight:850}.set-count{font-size:11px;color:var(--muted);margin-top:3px}.set-actions{display:flex;gap:6px}.small{min-height:40px;padding:0 11px;border:0;border-radius:11px;background:#f4efe9;font-weight:800;color:#5a4e44}.edit-list{display:flex;flex-direction:column;gap:8px}.edit-item{display:grid;grid-template-columns:1fr auto;gap:7px}.empty{text-align:center;padding:30px;color:var(--muted);background:#f9f6f2;border-radius:16px}
+#installBtn{display:none}
+.hero-card{padding:16px;background:linear-gradient(145deg,#fff,#f8f2ea);border-color:#ddd1c2}
+.hero-meta{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-bottom:12px}.chip{font-size:11px;font-weight:850;color:var(--accent);background:#fff;border:1px solid #e4d9cd;border-radius:999px;padding:6px 9px}
+.hero-card .big-result{min-height:185px;border:0;background:transparent}.hero-card .main-actions .btn.primary{height:58px;font-size:17px;box-shadow:0 9px 22px rgba(140,109,83,.18)}
+.segment{display:grid;grid-template-columns:1fr 1fr;padding:5px;background:var(--soft);border:1px solid var(--line);border-radius:16px;gap:5px}.segment .mode{padding:12px 14px;border:0;border-radius:12px;background:transparent;text-align:center}.segment .mode.active{background:#fff;box-shadow:0 4px 14px rgba(80,65,50,.08);color:var(--accent)}.segment .mode .desc{display:none}.mode-help{font-size:12px;color:var(--muted);text-align:center;margin-top:9px}
+.compact-card{padding:15px 17px}.compact-card h2{font-size:14px;margin-bottom:10px;color:var(--muted)}.compact-card .topbar{align-items:center}.compact-card .select{height:44px}
+.items-card{padding:15px 17px}.items-card h2{font-size:14px;margin-bottom:10px}.items{gap:7px}.item{padding:10px 12px;border-radius:12px;font-size:13px}
+.backup-card{padding:15px 17px}.backup-row{display:flex;gap:8px;flex-wrap:wrap}.backup-row .btn{flex:1;min-width:150px}.backup-note{font-size:11px;color:var(--muted);line-height:1.55;margin-top:9px}
+@media(max-width:620px){.app{padding:15px 12px 36px}h1{font-size:25px}.card{padding:16px}.mode-grid,.items{grid-template-columns:1fr}.topbar{display:grid;grid-template-columns:1fr 1fr}.set-select{grid-column:1/-1}.main-actions{flex-direction:column}.set-card{align-items:flex-start;flex-direction:column}.set-actions{width:100%}.set-actions .small{flex:1}.result-text{font-size:29px}}
 </style>
-<script>
-// 동적 Blob URL을 활용한 Manifest 주입 (모바일 크롬 PWA 설치 지원)
-(function() {
-  const manifestData = {
-    "name": "Q & A",
-    "short_name": "Q&A",
-    "start_url": "./",
-    "display": "standalone",
-    "background_color": "#f3eadb",
-    "theme_color": "#f4ead8",
-    "icons": [
-      {
-        "src": "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23c96f52%22/><text x=%2250%%22 y=%2254%%22 font-size=%2250%22 text-anchor=%22middle%22 dominant-baseline=%22central%22 fill=%22%23fffaf0%22>Q</text></svg>",
-        "sizes": "192x192",
-        "type": "image/svg+xml"
-      }
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/manifest+json'});
-  const manifestURL = URL.createObjectURL(blob);
-  const link = document.createElement('link');
-  link.rel = 'manifest';
-  link.href = manifestURL;
-  document.currentScript.parentNode.appendChild(link);
-})();
-</script>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-title">Q & A</div>
-      <div class="brand-sub">질문 생성기<br></div>
-    </div>
-    <nav class="nav">
-      <button data-view="random" class="active">🎲 랜덤</button>
-      <button data-view="categories">📂 카테고리</button>
-      <button data-view="favorites">♡ 즐겨찾기 <span id="favCountNav"></span></button>
-      <button data-view="manage">🛠 질문 관리</button>
-    </nav>
-    <div class="side-bottom">ver27<br>by me</div>
-  </aside>
+<header>
+  <div><h1>Select</h1></div>
+  <button class="btn primary" id="installBtn">📱 앱 설치</button>
+</header>
 
-  <main class="main">
-    <header class="topbar">
-      <nav class="mobile-tabs" aria-label="모바일 메뉴">
-        <span class="mobile-brand">Q&A</span>
-        <button data-mobile-view="random" class="active">🎲 랜덤</button>
-        <button data-mobile-view="categories">📂 카테고리</button>
-        <button data-mobile-view="favorites">♡ 저장 <span id="favCountMobile"></span></button>
-        <button data-mobile-view="manage">⚙ 관리</button>
-      </nav>
-    </header>
-    <section class="view" id="view"></section>
-  </main>
+<section class="card hero-card">
+<div class="hero-meta"><span class="chip" id="heroSet">세트</span><span class="chip" id="heroMode">🎲 랜덤 선택</span></div>
+<div class="big-result">
+<div class="result-label" id="resultLabel">오늘의 결정</div>
+<div class="result-text" id="resultText">결정이 필요하신가요?</div>
+<div class="result-sub" id="resultSub">고민은 여기까지.</div>
+</div>
+<div class="main-actions">
+<button class="btn primary" id="pickBtn">🎲 선택하기</button>
+<button class="btn" id="resetRemoved" style="display:none">↺ 제거 항목 초기화</button>
+</div>
+<div class="status" id="status"></div>
+</section>
+
+<section class="card compact-card">
+<h2>선택 방식</h2>
+<div class="segment">
+<button class="mode active" id="modeRandom"><div class="title">🎲 랜덤 선택</div><div class="desc">전체 항목에서 매번 무작위로 선택합니다.</div></button>
+<button class="mode" id="modeRemove"><div class="title">✂️ 하나씩 제거</div><div class="desc">뽑힌 항목을 제거하고 마지막 1개까지 이어갑니다.</div></button>
+</div>
+<div class="mode-help" id="modeHelp">전체 항목에서 매번 무작위로 하나를 고릅니다.</div>
+</section>
+
+<section class="card compact-card">
+<h2>선택 세트</h2>
+<div class="topbar">
+<select id="setSelect" class="select set-select"></select>
+<button class="btn" id="manageSets">세트 관리</button>
+<button class="btn primary" id="newSet">＋ 새 세트</button>
+</div>
+</section>
+
+<section class="card items-card">
+<h2>현재 항목 <span id="itemCount" class="counter"></span></h2>
+<div id="items" class="items"></div>
+</section>
+
+<section class="card backup-card">
+<h2>프리셋 백업</h2>
+<div class="backup-row">
+<button class="btn" id="exportBackup">⇩ 프리셋 내보내기</button>
+<button class="btn" id="importBackup">⇧ 프리셋 가져오기</button>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+</div>
+<div class="backup-note">선택 세트와 항목, 선택 방식만 JSON 파일로 저장합니다. 다른 기기에서 가져오면 현재 프리셋을 백업 파일의 내용으로 교체합니다.</div>
+</section>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="modal-back" id="modalBack">
+<div class="modal">
+<div class="modal-head"><div class="modal-title" id="modalTitle"></div><button class="btn" id="closeModal">닫기</button></div>
+<div id="modalBody"></div>
+</div>
+</div>
 
 <script>
-// PWA Service Worker 등록
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const swCode = `
-      self.addEventListener('install', e => self.skipWaiting());
-      self.addEventListener('activate', e => e.waitUntil(clients.claim()));
-      self.addEventListener('fetch', e => {
-        e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-      });
-    `;
-    const blob = new Blob([swCode], {type: 'text/javascript'});
-    const swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl)
-      .then(reg => console.log('ServiceWorker registered!', reg))
-      .catch(err => console.log('ServiceWorker registration failed: ', err));
-  });
-}
+(function(){
+"use strict";
 
-const DEFAULT_CATEGORIES = [
-  {id:"story", name:"🎬 스토리"},
-  {id:"character", name:"👤 인물"},
-  {id:"space", name:"🌎 시공간"},
-  {id:"directing", name:"🎥 연출"},
-  {id:"brainstorm", name:"💭 브레인스토밍"},
-  {id:"writer", name:"✍️ 작가"}
-];
-
-const QUESTIONS = [
-  // 스토리
-  ["story","이 씬이 없어지면 이야기에 어떤 문제가 생기는가?"],
-  ["story","이 장면의 시작과 끝에서 무엇이 달라지는가?"],
-  ["story","주인공의 행동 때문에 사건이 발생하고 있는가, 아니면 사건에 끌려가고 있는가?"],
-  ["story","관객이 지금 알아야 하는 정보와 아직 몰라도 되는 정보는 무엇인가?"],
-  ["story","이 장면은 사건을 진행시키는가, 인물을 보여주는가, 정보를 전달하는가?"],
-  ["story","이 장면을 이야기에서 가장 늦게 보여준다면 무엇이 달라지는가?"],
-  ["story","반대로 이 장면을 훨씬 일찍 보여준다면?"],
-  ["story","지금까지의 사건이 다음 사건을 자연스럽게 만들어내고 있는가?"],
-  ["story","주인공이 아무것도 하지 않아도 이야기가 진행된다면 문제가 있는가?"],
-  ["story","이 이야기에서 우연에 기대고 있는 사건은 몇 개인가?"],
-  ["story","관객이 이미 눈치챘을 가능성이 가장 높은 것은 무엇인가?"],
-  ["story","관객에게 너무 친절하게 설명하고 있는 부분은 어디인가?"],
-  ["story","이 이야기에서 정말 필요한 갈등은 무엇이고, 장식에 가까운 갈등은 무엇인가?"],
-  ["story","이 씬의 목적을 한 문장으로 말할 수 있는가?"],
-  ["story","이 장면에서 아무 일도 일어나지 않는 것처럼 보이지만 실제로 달라지는 것은 무엇인가?"],
-  ["story","주인공이 가장 중요한 선택을 하는 순간은 어디인가?"],
-  ["story","그 선택을 주인공이 하지 않는다면 이야기는 어디로 가는가?"],
-  ["story","주인공이 원하는 것과 이야기가 실제로 요구하는 것은 다른가?"],
-  ["story","이야기의 핵심 질문은 시작부터 끝까지 살아 있는가?"],
-  ["story","이 결말이 아니면 안 되는 이유가 있는가?"],
-  ["story","결말을 한 장면 앞에서 끝낸다면 더 강해지는가?"],
-  ["story","이 이야기에서 관객이 가장 오래 기억했으면 하는 장면은 무엇인가?"],
-  ["story","가장 재미있는 장면과 가장 중요한 장면은 같은가?"],
-  ["story","이 이야기에 없어도 되는 인물이나 사건이 있는가?"],
-  ["story","한 장면을 삭제해야 한다면 무엇을 가장 먼저 지울 것인가?"],
-  ["story","이야기의 중간에 주인공의 목표가 완전히 바뀐다면 더 흥미로워지는가?"],
-  ["story","지금의 갈등은 인물이 만들어낸 것인가, 작가가 만들어준 것인가?"],
-  ["story","관객이 주인공을 좋아하지 않아도 끝까지 따라갈 이유가 있는가?"],
-  ["story","이 이야기는 주인공에 관한 이야기인가, 아니면 주인공을 통해 다른 것을 말하는 이야기인가?"],
-  ["story","이 장면의 정보가 모두 사실이라면 이야기가 너무 쉽게 풀리는가?"],
-  ["story","관객에게 보여준 정보 중 일부가 사실은 거짓이라면 무엇이 가장 효과적인가?"],
-  ["story","이 영화가 관객에게 질문 하나만 남긴다면 무엇이어야 하는가?"],
-  ["story","이 장면의 갈등을 더 작게 만들면 오히려 더 현실적으로 느껴지는가?"],
-  ["story","이 장면에서 아무도 원하는 것을 얻지 못한다면 어떤 긴장이 생기는가?"],
-  ["story","이 장면에서 승자가 생기면 오히려 재미가 사라지는가?"],
-  ["story","지금의 장르적 약속을 끝까지 지키고 있는가?"],
-  ["story","관객이 기대하는 장르적 순간을 일부러 다른 방식으로 준다면?"],
-  ["story","이 영화에서 가장 예측 가능한 부분은 어디인가?"],
-  ["story","예측 가능한 부분 하나를 완전히 뒤집는다면 무엇을 뒤집을 것인가?"],
-  ["story","이 이야기에서 가장 늦게 밝혀져야 하는 사실은 무엇인가?"],
-  ["story","그 사실을 관객에게 더 일찍 알려주면 긴장감이 생길 수 있는가?"],
-  ["story","주인공이 사건을 해결하는 데 실패해야만 더 의미 있어지는 부분은 없는가?"],
-  ["story","이 장면의 갈등을 말싸움이 아니라 행동으로 바꿀 수 있는가?"],
-  ["story","이 영화에서 가장 큰 사건이 사실 화면 밖에서 일어난다면?"],
-  ["story","관객이 기대하는 장면을 아예 보여주지 않는다면 무엇을 얻는가?"],
-  ["story","이 이야기의 주제가 대사로 드러나는 순간이 있는가? 있다면 없애도 되는가?"],
-  ["story","작가가 주제를 증명하려고 애쓰고 있는 장면은 없는가?"],
-  ["story","이야기 속 인물들은 정말 각자 다른 목적을 가지고 움직이는가?"],
-  ["story","모든 인물이 한 가지 목표만 가지고 있다면 무엇이 단순해지는가?"],
-
-  // 인물
-  ["character","이 인물은 지금 당장 무엇을 원하는가?"],
-  ["character","이 인물이 원하는 것을 이미 가지고 있다면 왜 계속 행동하는가?"],
-  ["character","이 인물이 절대 남에게 보여주지 않는 모습은 무엇인가?"],
-  ["character","이 인물은 자기 자신에 대해 무엇을 오해하고 있는가?"],
-  ["character","타인은 이 사람을 어떻게 생각하는가?"],
-  ["character","이 인물이 사랑한다고 믿는 것이 정말 사랑일까?"],
-  ["character","이 인물의 행동은 정말 이 사람의 성격에 맞는가?"],
-  ["character","이 인물이 사실 틀렸다면 무엇에 대해 틀렸는가?"],
-  ["character","이 사람이 이 사실을 알게 된다면 가장 먼저 무엇을 할까?"],
-  ["character","이 인물이 가장 두려워하는 것은 실제 사건인가, 그 사건이 의미하는 것인가?"],
-  ["character","이 인물이 남에게 가장 자주 하는 거짓말은 무엇인가?"],
-  ["character","이 인물이 자기 자신에게 하는 거짓말은 무엇인가?"],
-  ["character","이 인물이 부끄러워하는 기억은 무엇인가?"],
-  ["character","이 인물이 자랑스럽게 생각하지만 타인은 이상하게 보는 것은 무엇인가?"],
-  ["character","이 인물에게 돈이 충분하다면 지금의 문제를 해결할 수 있는가?"],
-  ["character","이 인물이 원하는 것과 필요한 것은 같은가?"],
-  ["character","이 인물은 누군가에게 인정받기 위해 어떤 행동까지 할 수 있는가?"],
-  ["character","이 인물이 가장 쉽게 화내는 말은 무엇인가?"],
-  ["character","이 인물이 가장 듣고 싶지만 절대 요구하지 못하는 말은 무엇인가?"],
-  ["character","이 인물이 혼자 있을 때만 하는 행동은 무엇인가?"],
-  ["character","이 인물의 가장 사소한 습관이 성격을 드러낸다면 무엇인가?"],
-  ["character","이 인물이 다른 사람을 오해하고 있는 부분은 무엇인가?"],
-  ["character","다른 사람이 이 인물을 오해하고 있는 부분은 무엇인가?"],
-  ["character","이 인물이 절대로 용서하지 못할 것은 무엇인가?"],
-  ["character","그런데 정작 이 인물 자신도 똑같은 일을 하고 있다면?"],
-  ["character","이 인물에게 가장 필요한 사람은 누구지만, 가장 싫어하는 사람은 누구인가?"],
-  ["character","이 인물이 누군가를 질투한다면 무엇을 질투하는가?"],
-  ["character","이 인물이 가장 부러워하는 삶은 어떤 삶인가?"],
-  ["character","이 인물이 다른 사람 앞에서 가장 자주 연기하는 감정은 무엇인가?"],
-  ["character","이 인물은 언제부터 지금의 사람이 되었을까?"],
-  ["character","과거의 어느 한 사건이 없었다면 이 사람은 어떻게 달라졌을까?"],
-  ["character","이 인물이 어린 시절의 자신을 만난다면 무엇을 숨길까?"],
-  ["character","이 인물이 주인공이 아니라 주변 인물이었다면 이야기는 어떻게 보일까?"],
-  ["character","이 인물이 이야기의 모든 사실을 알고 있다면 어떤 선택을 할까?"],
-  ["character","반대로 이 인물이 아무것도 모른다면?"],
-  ["character","이 인물이 가장 믿고 있는 사람이 사실 가장 위험한 사람이라면?"],
-  ["character","이 인물이 싫어하는 사람에게서 자신과 닮은 점을 발견한다면?"],
-  ["character","두 인물이 서로의 속마음을 들을 수 있다면 지금 장면은 어떻게 달라지는가?"],
-  ["character","이 인물이 상대방에게 사과하지 못하는 진짜 이유는 무엇인가?"],
-  ["character","이 인물은 사랑받고 싶은가, 필요한 사람이 되고 싶은가?"],
-  ["character","이 인물이 아무에게도 말하지 않고 내리는 가장 큰 결정은 무엇인가?"],
-  ["character","이 인물의 행동을 관객이 이해하지 못해도 괜찮은가?"],
-  ["character","이 인물이 옳지만 싫어 보이는 순간을 만들 수 있는가?"],
-  ["character","이 인물이 틀렸지만 관객이 이해해주고 싶은 순간은 언제인가?"],
-  ["character","이 인물의 관계에서 누가 더 많이 알고 있는가?"],
-  ["character","둘 사이에서 먼저 떠날 수 있는 사람은 누구인가?"],
-  ["character","이 인물이 상대방에게 절대 묻지 않는 질문은 무엇인가?"],
-  ["character","이 인물이 평생 한 번도 해보지 않은 행동은 무엇일까?"],
-
-  // 시공간
-  ["space","이 장면이 꼭 이 장소에서 벌어져야 하는 이유가 있는가?"],
-  ["space","장소를 카페에서 장례식장으로 바꾸면 무엇이 달라지는가?"],
-  ["space","이 사건이 밤이 아니라 대낮에 벌어진다면?"],
-  ["space","이 사건이 새벽 5시에 벌어진다면?"],
-  ["space","이 공간에서 인물이 가장 불편해하는 지점은 어디인가?"],
-  ["space","이 장소를 주인공이 어린 시절부터 알고 있었다면 장면이 어떻게 달라지는가?"],
-  ["space","이 장소의 소유자는 누구이며 그 사실이 장면에 영향을 주는가?"],
-  ["space","이 공간에 들어온 사람마다 가장 먼저 보는 것은 무엇인가?"],
-  ["space","이 공간에서 절대로 보여주면 안 되는 곳이 있다면 어디인가?"],
-  ["space","이 사건이 같은 장소의 다른 방에서 일어난다면?"],
-  ["space","이 장면을 계단에서만 볼 수 있다면 무엇을 선택해 보여줄 것인가?"],
-  ["space","이 장소가 인물보다 먼저 관객에게 기억되게 만들 수 있는가?"],
-  ["space","이 공간에 사람이 한 명 더 많다면 어떤 긴장이 생기는가?"],
-  ["space","반대로 아무도 없다면?"],
-  ["space","이 장소에서 가장 평범한 물건 하나가 인물의 과거를 보여준다면 무엇인가?"],
-  ["space","이 공간은 인물을 보호하는가, 가두는가?"],
-  ["space","인물이 이 장소를 떠나지 못하는 물리적인 이유가 있는가?"],
-  ["space","이 사건이 다른 지역에서 벌어진다면 인물의 선택이 달라지는가?"],
-  ["space","이 이야기가 지금보다 20년 앞선 시대라면 무엇이 달라지는가?"],
-  ["space","반대로 20년 전이라면?"],
-  ["space","이 이야기에 현재의 기술이 하나도 없다면 어떤 문제가 생기는가?"],
-  ["space","이 세계에서 모든 사람이 당연하게 생각하지만 주인공만 이상하게 생각하는 것은 무엇인가?"],
-  ["space","이 세계에서 돈이 아니라 다른 것이 가장 중요한 가치라면 무엇일까?"],
-  ["space","이 장소에는 어떤 소리가 항상 존재하는가?"],
-  ["space","이 장소의 냄새를 관객에게 전달할 수 있다면 어떤 냄새인가?"],
-  ["space","계절을 바꾸면 이 장면의 감정이 어떻게 달라지는가?"],
-  ["space","비가 오지 않아야 할 장면에 비가 온다면 어떤 의미가 생기는가?"],
-  ["space","인물이 익숙한 장소에서 갑자기 길을 잃는다면 왜일까?"],
-  ["space","같은 장소를 영화 초반과 후반에 다시 보여준다면 무엇이 달라져 있어야 하는가?"],
-  ["space","공간이 변하지 않았는데 인물 때문에 전혀 다른 장소처럼 보이게 할 수 있는가?"],
-  ["space","이 장면에서 문 하나의 위치가 바뀌면 이야기의 긴장이 달라지는가?"],
-  ["space","인물이 앉는 자리 하나가 관계를 보여준다면 누가 어디에 앉는가?"],
-  ["space","이 장면에서 인물의 동선을 바꾸면 감정도 바뀌는가?"],
-  ["space","관객이 공간의 구조를 완전히 이해하지 못해도 되는 장면인가?"],
-  ["space","이 공간에 관객이 절대로 들어갈 수 없는 영역을 만든다면 어디인가?"],
-
-  // 연출
-  ["directing","이 장면을 대사 없이 보여줄 수 있는가?"],
-  ["directing","이 정보를 대사 대신 행동으로 보여줄 수 있는가?"],
-  ["directing","이 장면을 한 컷으로 찍는다면 무엇을 선택할 것인가?"],
-  ["directing","이 장면에서 관객에게 가장 먼저 보여줘야 하는 것은 무엇인가?"],
-  ["directing","반대로 끝까지 보여주지 않는 것이 더 강력한 것은 무엇인가?"],
-  ["directing","이 장면의 핵심을 하나의 이미지로 만든다면 어떤 이미지인가?"],
-  ["directing","이 장면의 핵심을 배우의 얼굴이 아니라 손으로 보여준다면?"],
-  ["directing","배우에게 감정을 설명하지 않고 행동만 지시한다면 무엇을 시킬 것인가?"],
-  ["directing","배우가 대사를 반대로 말해도 성립할 수 있는 장면인가?"],
-  ["directing","배우가 아무런 감정도 표현하지 않는다면 오히려 더 좋은가?"],
-  ["directing","이 장면에서 배우의 동선을 한 번만 바꾼다면 어디를 바꿀 것인가?"],
-  ["directing","두 배우가 서로를 바라보지 않고 대화한다면 무엇이 달라지는가?"],
-  ["directing","이 장면에서 카메라가 인물을 따라가야 하는가, 기다려야 하는가?"],
-  ["directing","카메라가 인물보다 먼저 움직인다면 어떤 의미가 생기는가?"],
-  ["directing","카메라가 끝까지 움직이지 않는다면?"],
-  ["directing","이 장면에서 가장 어울리지 않을 것 같은 앵글을 써본다면?"],
-  ["directing","이 장면을 롱렌즈로 찍었을 때와 광각으로 찍었을 때 무엇이 달라지는가?"],
-  ["directing","이 장면의 중요한 정보가 프레임 가장자리에 있다면?"],
-  ["directing","관객이 보고 싶은 것을 일부러 프레임 밖에 둔다면?"],
-  ["directing","이 장면에서 카메라의 시점은 누구의 편인가?"],
-  ["directing","관객이 특정 인물의 시선을 믿지 못하게 만들려면 어떻게 찍을 것인가?"],
-  ["directing","이 장면에서 소리를 먼저 들려주고 대상을 나중에 보여준다면?"],
-  ["directing","중요한 대사를 소음 때문에 제대로 듣지 못하게 한다면?"],
-  ["directing","음악을 완전히 없애면 장면이 더 좋아지는가?"],
-  ["directing","반대로 현실적으로는 어울리지 않는 음악을 넣는다면?"],
-  ["directing","이 장면의 리듬을 편집이 아니라 배우의 움직임으로 만든다면?"],
-  ["directing","컷을 하나도 하지 않고 끝까지 가야 한다면 무엇을 바꿔야 하는가?"],
-  ["directing","이 장면에서 가장 먼저 잘라야 할 컷은 무엇인가?"],
-  ["directing","반대로 관객이 불편해할 만큼 컷을 늦춘다면 어디까지 버틸 수 있는가?"],
-  ["directing","이 장면을 예상보다 10초 일찍 끊는다면?"],
-  ["directing","이 장면을 예상보다 10초 늦게 끊는다면?"],
-  ["directing","편집으로 해결하려는 문제를 촬영 단계에서 해결할 수 있는가?"],
-  ["directing","촬영으로 해결하려는 문제를 편집으로 해결하면 더 좋은가?"],
-  ["directing","이 장면에 꼭 필요한 컷과 그냥 멋있어서 넣고 싶은 컷을 구분할 수 있는가?"],
-  ["directing","이 장면의 핵심 소품을 배우가 직접 사용하지 않고 바라보기만 한다면?"],
-  ["directing","소품 하나를 완전히 다른 물건으로 바꾸면 장면의 의미가 달라지는가?"],
-  ["directing","의상을 바꾸는 것만으로 인물의 관계를 보여줄 수 있는가?"],
-  ["directing","미술이 인물의 성격을 말해준다면 무엇이 가장 먼저 보이는가?"],
-  ["directing","조명을 한 방향에서만 줄 수 있다면 어느 방향인가?"],
-  ["directing","이 장면에서 가장 어두워야 하는 것은 무엇인가?"],
-  ["directing","배경을 너무 예쁘게 만들면 오히려 장면의 힘이 약해지는가?"],
-  ["directing","배우의 연기보다 공간의 움직임이 감정을 전달하게 할 수 있는가?"],
-  ["directing","리허설에서 발견할 수 있는 문제와 촬영 중에 발견해야 하는 문제를 구분할 수 있는가?"],
-  ["directing","배우에게 이 장면의 감정을 설명하지 않고 상황만 설명한다면 어떤 결과가 나올까?"],
-  ["directing","두 배우가 같은 장면을 서로 다른 장르라고 생각하고 연기한다면?"],
-  ["directing","이 장면을 처음부터 끝까지 배우 한 명의 반응만 따라가며 편집한다면?"],
-  ["directing","관객이 장면의 중요한 사건을 직접 보지 못하게 한다면 무엇을 통해 알게 할 것인가?"],
-  ["directing","특수효과를 보여주는 대신 특수효과가 남긴 흔적만 보여준다면?"],
-  ["directing","CG로 만들고 싶은 장면을 실제 소품과 공간만으로 해결할 수 있는가?"],
-  ["directing","이 장면에서 배우가 한 번도 카메라를 보지 않아야 한다는 규칙을 만든다면?"],
-  ["directing","반대로 배우가 딱 한 번 카메라를 바라본다면 언제여야 하는가?"],
-  ["directing","이 장면을 관객이 엿보는 느낌으로 만들려면 카메라를 어디에 둘 것인가?"],
-  ["directing","이 장면의 핵심을 클로즈업 하나로 압축할 수 있는가?"],
-  ["directing","클로즈업을 단 한 번만 쓸 수 있다면 언제 쓸 것인가?"],
-  ["directing","이 장면의 마지막 컷을 완전히 다른 인물의 표정으로 끝낸다면?"],
-  ["directing","이 장면에서 관객이 기대하는 컷을 주지 않는다면 어떤 컷을 줄 것인가?"],
-  ["directing","배우의 가장 좋은 연기를 오히려 컷으로 잘라버리는 것이 맞는 순간은 언제인가?"],
-
-  // 브레인스토밍
-  ["brainstorm","주인공은 이 사건이 일어나기 30분 전에 무엇을 먹었을까?"],
-  ["brainstorm","주인공이 지금 당장 집에 돌아가 버린다면 이야기는 어떻게 되는가?"],
-  ["brainstorm","이 이야기에서 가장 쓸모없어 보이는 사람이 사실 뭔가를 알고 있다면?"],
-  ["brainstorm","주인공이 평생 한 번도 해보지 않은 행동을 지금 처음 한다면 무엇일까?"],
-  ["brainstorm","악역의 어머니가 이 이야기를 본다면 누구를 가장 싫어할까?"],
-  ["brainstorm","이 이야기의 모든 인물이 딱 한 가지씩 거짓말을 하고 있다면 무엇을 거짓말할까?"],
-  ["brainstorm","주인공이 사건보다 훨씬 사소한 문제 때문에 더 화가 난다면?"],
-  ["brainstorm","가장 중요한 물건이 너무 평범해서 아무도 눈치채지 못한다면 무엇일까?"],
-  ["brainstorm","이 영화에서 아무 의미 없어 보이는 배경 인물이 주인공의 미래를 알고 있다면?"],
-  ["brainstorm","주인공이 모든 사건을 해결한 뒤 가장 먼저 사고 싶은 것은 무엇일까?"],
-  ["brainstorm","이 장면에 갑자기 개가 들어온다면 무엇이 달라지는가?"],
-  ["brainstorm","주인공이 지금까지 한 모든 선택 중 하나만 취소할 수 있다면 무엇을 취소할까?"],
-  ["brainstorm","이 이야기의 가장 중요한 사건이 사실 누군가에게는 아주 평범한 하루라면?"],
-  ["brainstorm","주인공이 자신이 영화 속 인물이라는 사실을 모른 채 이상한 규칙을 하나 발견한다면?"],
-  ["brainstorm","이 이야기에서 가장 먼저 죽을 것처럼 보이는 사람이 끝까지 살아 있다면?"],
-  ["brainstorm","악역이 주인공을 미워하는 것이 아니라 오히려 좋아한다면?"],
-  ["brainstorm","주인공과 악역이 사실 서로를 아주 잘 이해하고 있다면?"],
-  ["brainstorm","주인공이 사건을 해결하는 것보다 그냥 잊어버리는 것이 행복하다면?"],
-  ["brainstorm","이 영화에서 관객만 알고 인물들은 끝까지 모르는 사소한 사실 하나는 무엇일까?"],
-  ["brainstorm","이 이야기에서 가장 비싼 물건과 가장 싼 물건은 무엇일까?"],
-  ["brainstorm","주인공이 갑자기 자신의 어린 시절 사진을 발견한다면 사진 속 배경에는 무엇이 있을까?"],
-  ["brainstorm","이 영화의 모든 문이 하나씩 다른 의미를 가진다면 어떤 문이 가장 중요할까?"],
-  ["brainstorm","이 이야기에서 반복되는 사소한 행동 하나를 정한다면 무엇일까?"],
-  ["brainstorm","주인공이 오늘 하루를 완전히 기억하지 못한다면 가장 먼저 무엇을 확인할까?"],
-  ["brainstorm","두 사람이 서로의 비밀을 동시에 알아버리지만 아무도 말하지 않는다면?"],
-  ["brainstorm","이야기에서 가장 중요한 대사가 엑스트라가 지나가며 하는 말이라면?"],
-  ["brainstorm","주인공이 가장 싫어하는 음식이 사건 해결의 단서가 된다면?"],
-  ["brainstorm","이 이야기의 배경에서 모두가 알고 있지만 관객에게는 보이지 않는 사건이 있다면?"],
-  ["brainstorm","주인공이 오늘 하루 동안 계속 같은 사람을 우연히 마주친다면 이유가 있을까?"],
-  ["brainstorm","이 영화의 마지막 장면에 첫 장면의 물건이 다시 등장한다면 무엇일까?"],
-  ["brainstorm","주인공이 지금 가장 하고 싶은 말과 실제로 하는 말이 정반대라면?"],
-  ["brainstorm","모든 인물이 한 번씩 같은 꿈을 꾼다면 그 꿈에는 무엇이 있을까?"],
-  ["brainstorm","이 이야기에서 아무도 중요하게 생각하지 않는 규칙 하나가 있다면?"],
-  ["brainstorm","그 규칙을 주인공만 어긴다면 어떤 일이 생길까?"],
-  ["brainstorm","주인공이 사건의 진실보다 더 큰 오해를 믿고 있다면?"],
-  ["brainstorm","이 영화의 모든 장면에서 배경에 같은 사람이 지나간다면 언제 처음 눈치챌까?"],
-  ["brainstorm","주인공이 하루 동안 휴대폰을 잃어버린다면 이야기에서 무엇이 달라질까?"],
-  ["brainstorm","이 장면의 모든 인물이 사실 서로 다른 이유로 같은 장소에 모였다면?"],
-  ["brainstorm","주인공이 상대방의 이름을 끝까지 기억하지 못한다면 관계는 어떻게 보일까?"],
-  ["brainstorm","이 영화에서 가장 웃긴 장면이 가장 슬픈 장면과 같은 장면이라면 어떻게 만들까?"],
-  ["brainstorm","주인공이 누군가에게 미안해해야 하는데 그 이유를 스스로 모른다면?"],
-  ["brainstorm","이 이야기의 악역에게도 오늘 하루 동안 꼭 해야 하는 평범한 일이 있다면 무엇일까?"],
-  ["brainstorm","이 사건이 일어나지 않았다면 주인공은 오늘 무엇을 하고 있었을까?"],
-  ["brainstorm","주인공이 갑자기 전혀 다른 직업을 가진 사람처럼 행동한다면 그 이유는?"],
-  ["brainstorm","이 영화에서 단 한 명만 거짓말을 하지 않는다면 누구일까?"],
-  ["brainstorm","모든 인물이 주인공을 걱정하지만 주인공만 그 이유를 모른다면?"],
-  ["brainstorm","이야기의 가장 큰 비밀을 알고 있는 사람이 그 비밀의 의미를 모른다면?"],
-  ["brainstorm","주인공이 직전에 아주 좋은 하루를 보냈다면 사건의 감정은 어떻게 달라질까?"],
-  ["brainstorm","이 영화의 제목이 사실 영화 속 누군가의 사소한 농담이라면?"],
-  ["brainstorm","주인공이 마지막 순간에 목표를 포기하고 다른 사람을 도와준다면 왜일까?"],
-  ["brainstorm","이 영화의 첫 장면을 본 사람이 마지막 장면을 본다면 어떤 질문을 하게 될까?"],
-  ["brainstorm","이야기에서 가장 평범한 사람이 가장 이상한 비밀을 가지고 있다면?"],
-  ["brainstorm","주인공이 모든 것을 설명할 수 있지만 아무도 믿어주지 않는다면?"],
-  ["brainstorm","이 영화에 단 한 번만 등장하는 소리가 있다면 무엇일까?"],
-  ["brainstorm","주인공이 이 사건을 친구에게 설명한다면 어떤 부분을 빼먹을까?"],
-  ["brainstorm","이야기의 핵심 장면을 전혀 다른 인물의 하루로 바꿔서 본다면 무엇이 보일까?"],
-  ["brainstorm","주인공이 사건의 진실을 알았지만 일부러 모르는 척한다면 왜일까?"],
-  ["brainstorm","이 영화에서 관객이 가장 쉽게 무시할 장면 하나를 고른다면?"],
-  ["brainstorm","그 장면이 사실 마지막에 가장 중요한 장면이라면 어떤 정보가 숨어 있을까?"],
-
-  // 작가
-  ["writer","나는 왜 이 이야기를 쓰고 싶은가?"],
-  ["writer","내가 이 장면을 넣은 진짜 이유는 무엇인가?"],
-  ["writer","내가 쓰기 싫어서 피하고 있는 장면은 무엇인가?"],
-  ["writer","내가 이 인물을 좋아해서 지나치게 편들고 있는 것은 아닌가?"],
-  ["writer","내가 이 인물을 싫어해서 지나치게 벌주고 있는 것은 아닌가?"],
-  ["writer","내가 이 결말을 좋아하는 진짜 이유는 무엇인가?"],
-  ["writer","내가 이 이야기를 통해 관객에게 인정받고 싶은 것은 무엇인가?"],
-  ["writer","나는 관객에게 무엇을 느끼게 하고 싶은가?"],
-  ["writer","그런데 내가 실제로 쓰고 있는 것은 그것과 같은가?"],
-  ["writer","내가 지금 재미있다고 느끼는 이유는 정말 이야기 때문인가?"],
-  ["writer","내가 가장 자신 없는 부분은 어디인가?"],
-  ["writer","내가 가장 자신 있다고 생각하는 부분이 사실 가장 위험한 부분이라면?"],
-  ["writer","나는 어떤 장면을 멋있다고 생각해서 필요 이상으로 붙잡고 있는가?"],
-  ["writer","내가 좋아하는 영화의 영향을 지나치게 받고 있는 부분은 어디인가?"],
-  ["writer","나는 어떤 종류의 인물을 반복해서 쓰고 있는가?"],
-  ["writer","내가 현실에서는 하지 못할 말을 이 이야기를 통해 하고 있는가?"],
-  ["writer","내가 이 이야기에서 가장 숨기고 싶은 생각은 무엇인가?"],
-  ["writer","내가 이 작품을 망칠까 봐 시도하지 않는 것은 무엇인가?"],
-  ["writer","지금 이 장면을 처음부터 다시 쓴다면 무엇부터 바꾸고 싶은가?"],
-  ["writer","내가 이 이야기를 남에게 설명할 때 유독 설명을 길게 하는 부분은 어디인가?"],
-  ["writer","내가 설명하기 싫어서 얼버무리는 부분은 어디인가?"],
-  ["writer","이 이야기를 쓰면서 내가 실제로 화가 난 대상은 무엇인가?"],
-  ["writer","내가 이 작품에서 가장 쉽게 용서하는 인물은 누구인가? 왜 그런가?"],
-  ["writer","내가 이 작품에서 가장 엄격하게 판단하는 인물은 누구인가?"],
-  ["writer","내가 관객의 반응을 지나치게 의식하고 있는 부분은 없는가?"],
-  ["writer","관객이 싫어할까 봐 빼버린 장면이 있다면 무엇인가?"],
-  ["writer","반대로 관객이 좋아할 것 같아서 넣은 장면은 무엇인가?"],
-  ["writer","아무도 이 작품을 보지 않는다고 해도 쓰고 싶은 장면은 무엇인가?"],
-  ["writer","내가 이 이야기를 끝내고 싶지 않은 이유는 무엇인가?"],
-  ["writer","이 이야기를 끝내야 한다는 사실을 내가 받아들이지 못하고 있는 것은 아닌가?"],
-  ["writer","내가 지금 고치고 있는 것이 정말 문제인가, 아니면 고치는 행위가 편해서 붙잡고 있는 것인가?"],
-  ["writer","내가 이 작품에서 가장 많이 반복하는 말이나 행동은 무엇인가?"],
-  ["writer","나는 어떤 감정을 쓰는 것을 어려워하는가?"],
-  ["writer","나는 어떤 감정을 지나치게 잘 안다고 착각하는가?"],
-  ["writer","내 경험이 아닌 것을 쓸 때 내가 과하게 설명하는 부분은 없는가?"],
-  ["writer","내가 실제 사람을 모델로 삼았다는 사실이 드러날까 봐 바꾼 부분은 무엇인가?"],
-  ["writer","내가 이 이야기를 지금 쓰지 않았다면 1년 뒤에도 쓰고 싶을까?"],
-  ["writer","내가 이 작품에서 정말 하고 싶은 말은 너무 평범해서 숨기고 있는 것은 아닐까?"],
-  ["writer","내가 생각하는 좋은 영화의 기준과 이 작품이 실제로 요구하는 기준은 같은가?"]
-].map((x,i)=>({id:"q"+String(i+1).padStart(3,"0"),categoryId:x[0],text:x[1]}));
-
-const LS_Q="onit_questions_v1";
-const LS_C="onit_categories_v1";
-const LS_F="onit_favorites_v1";
-
-let categories = loadCategories();
-let questions = loadQuestions();
-let favorites = new Set(JSON.parse(localStorage.getItem(LS_F)||"[]"));
-let currentQuestionId = null;
-let currentView = "random";
-
-function loadCategories(){
-  try{
-    const saved=JSON.parse(localStorage.getItem(LS_C));
-    return Array.isArray(saved)&&saved.length ? saved : structuredClone(DEFAULT_CATEGORIES);
-  }catch(e){return structuredClone(DEFAULT_CATEGORIES)}
-}
-function loadQuestions(){
-  try{
-    const saved=JSON.parse(localStorage.getItem(LS_Q));
-    return Array.isArray(saved)&&saved.length ? saved : QUESTIONS;
-  }catch(e){return QUESTIONS}
-}
-function save(){
-  localStorage.setItem(LS_Q,JSON.stringify(questions));
-  localStorage.setItem(LS_C,JSON.stringify(categories));
-  localStorage.setItem(LS_F,JSON.stringify([...favorites]));
-}
-function catName(id){return categories.find(c=>c.id===id)?.name || "미분류"}
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-}
-function randomFrom(arr){return arr.length?arr[Math.floor(Math.random()*arr.length)]:null}
-function toast(msg){
-  const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");
-  clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800);
-}
-function updateNav(){
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===currentView));
-  document.querySelectorAll("[data-mobile-view]").forEach(b=>b.classList.toggle("active",b.dataset.mobileView===currentView));
-  document.getElementById("favCountNav").textContent=favorites.size?`(${favorites.size})`:"";
-  const mobileCount=document.getElementById("favCountMobile");
-  if(mobileCount) mobileCount.textContent=favorites.size?`(${favorites.size})`:"";
-}
-function setView(v){
-  currentView=v;updateNav();
-  if(v==="random") renderRandom();
-  if(v==="categories") renderCategories();
-  if(v==="favorites") renderFavorites();
-  if(v==="manage") renderManage();
-}
-function renderRandom(){
-  const q = currentQuestionId ? questions.find(x=>x.id===currentQuestionId) : null;
-  const chosen=q || randomFrom(questions);
-  if(!chosen){ document.getElementById("view").innerHTML=`<div class="empty">질문이 없습니다. 질문 관리에서 추가해 주세요.</div>`;return; }
-  currentQuestionId=chosen.id;
-  const isFav=favorites.has(chosen.id);
-  document.getElementById("view").innerHTML=`
-    <div class="hero">
-      <div class="eyebrow">Random Question</div>
-      <h1>질문</h1>
-      <p class="intro">랜덤 질문 뽑기</p>
-    </div>
-    <div class="question-card">
-      <div class="card-inner">
-        <div class="question-area">
-          <span class="category-pill">${escapeHtml(catName(chosen.categoryId))}</span>
-          <div class="question">${escapeHtml(chosen.text)}</div>
-        </div>
-        <div class="card-actions">
-          <button class="heart ${isFav?"fav":""}" id="heartBtn" aria-label="즐겨찾기">${isFav?"♥":"♡"}</button>
-          <button class="primary" id="randomBtn">🎲 다른 질문</button>
-        </div>
-      </div>
-    </div>
-    <div class="toolbar">
-      <button class="chip" data-cat="all">전체 질문</button>
-      ${categories.map(c=>`<button class="chip" data-cat="${escapeHtml(c.id)}">${escapeHtml(c.name)}</button>`).join("")}
-    </div>
-  `;
-  document.getElementById("randomBtn").onclick=()=>{currentQuestionId=null;renderRandom();};
-  document.getElementById("heartBtn").onclick=()=>toggleFavorite(chosen.id);
-  document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>categoryRandom(b.dataset.cat));
-}
-function categoryRandom(catId){
-  const pool=catId==="all"?questions:questions.filter(q=>q.categoryId===catId);
-  const q=randomFrom(pool);
-  if(!q){toast("이 카테고리에는 질문이 없습니다.");return}
-  currentQuestionId=q.id;
-  renderRandom();
-}
-function toggleFavorite(id){
-  if(favorites.has(id)){favorites.delete(id);toast("즐겨찾기에서 뺐어요.");}
-  else{favorites.add(id);toast("즐겨찾기에 저장했어요.");}
-  save();updateNav();renderRandom();
-}
-function renderCategories(){
-  document.getElementById("view").innerHTML=`
-    <div class="hero"><div class="eyebrow">Categories</div><h1>카테고리</h1><p class="intro">카테고리 질문 뽑기</p></div>
-    <div class="category-grid">
-      ${categories.map(c=>{
-        const count=questions.filter(q=>q.categoryId===c.id).length;
-        return `<button class="cat-card" data-cat="${escapeHtml(c.id)}"><strong>${escapeHtml(c.name)}</strong><span>${count}개의 질문</span></button>`;
-      }).join("")}
-    </div>
-  `;
-  document.querySelectorAll(".cat-card").forEach(b=>b.onclick=()=>categoryRandom(b.dataset.cat));
-}
-function renderFavorites(){
-  const list=questions.filter(q=>favorites.has(q.id));
-  document.getElementById("view").innerHTML=`
-    <div class="hero"><div class="eyebrow">Favorites</div><h1>즐겨찾기</h1><p class="intro">즐겨찾기 내 질문 뽑기</p></div>
-    <div class="toolbar">
-      <button class="primary" id="favRoulette">♥ 즐겨찾기에서 랜덤</button>
-    </div>
-    <div class="list">
-      ${list.length?list.map(q=>`<div class="item">
-        <div class="item-main"><div class="item-cat">${escapeHtml(catName(q.categoryId))}</div><div class="item-text">${escapeHtml(q.text)}</div></div>
-        <div class="item-actions"><button class="icon-btn" data-remove="${q.id}">♥</button></div>
-      </div>`).join(""):`<div class="panel empty">아직 저장한 질문이 없습니다.<br>질문 카드의 ♡를 눌러 저장해보세요.</div>`}
-    </div>
-  `;
-  const rb=document.getElementById("favRoulette");
-  rb.onclick=()=>{
-    const q=randomFrom(list);
-    if(!q){toast("즐겨찾기 질문이 없습니다.");return}
-    currentQuestionId=q.id;setView("random");
-  };
-  document.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>toggleFavorite(b.dataset.remove));
-}
-function renderManage(){
-  document.getElementById("view").innerHTML=`
-    <div class="hero"><div class="eyebrow">Database</div><h1>질문 관리</h1><p class="intro">질문과 카테고리는 여기서 자유롭게 추가하고 고칠 수 있어요.</p></div>
-    <div class="panel">
-      <div class="panel-title">새 질문 추가</div>
-      <div class="form-grid">
-        <div><label>카테고리</label><select id="qCat">${categories.map(c=>`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`).join("")}</select></div>
-        <div><label>질문</label><textarea id="qText" placeholder="생각할 거리를 입력하세요."></textarea></div>
-        <button class="primary" id="addQ">+ 질문 추가</button>
-      </div>
-    </div>
-    <div class="panel" style="margin-top:16px">
-      <div class="panel-title">카테고리 관리</div>
-      <div class="form-row"><input id="newCat" placeholder="새 카테고리 이름 (예: 🎭 장르)"><button class="primary" id="addCat">+ 추가</button></div>
-      <div class="list" style="margin-top:12px">
-        ${categories.map(c=>`<div class="item"><div class="item-main"><div class="item-text">${escapeHtml(c.name)} <span class="small">· ${questions.filter(q=>q.categoryId===c.id).length}개</span></div></div><div class="item-actions"><button class="icon-btn" data-rename="${escapeHtml(c.id)}">수정</button>${categories.length>1?`<button class="icon-btn" data-delcat="${escapeHtml(c.id)}">삭제</button>`:""}</div></div>`).join("")}
-      </div>
-    </div>
-    <div class="panel" style="margin-top:16px">
-      <div class="panel-title">질문 목록 <span class="small">(${questions.length}개)</span></div>
-      <div class="list">
-        ${questions.map(q=>`<div class="item">
-          <div class="item-main"><div class="item-cat">${escapeHtml(catName(q.categoryId))}</div><div class="item-text">${escapeHtml(q.text)}</div></div>
-          <div class="item-actions"><button class="icon-btn" data-edit="${q.id}">수정</button><button class="icon-btn" data-del="${q.id}">삭제</button></div>
-        </div>`).join("")}
-      </div>
-    </div>
-    <div class="panel" style="margin-top:16px">
-      <div class="panel-title">데이터 백업</div>
-      <p class="intro" style="margin-bottom:14px">수정·추가한 질문, 카테고리, 즐겨찾기를 JSON 파일 하나로 다른 기기에 옮길 수 있어요.</p>
-      <div class="toolbar" style="margin:0">
-        <button class="primary" id="exportBackup">↓ 백업 내보내기</button>
-        <button class="secondary" id="importBackupBtn">↑ 백업 가져오기</button>
-        <input type="file" id="importBackupFile" accept="application/json,.json" class="hidden">
-      </div>
-    </div>
-  `;
-  document.getElementById("exportBackup").onclick=exportBackup;
-  document.getElementById("importBackupBtn").onclick=()=>document.getElementById("importBackupFile").click();
-  document.getElementById("importBackupFile").onchange=importBackup;
-
-  document.getElementById("addQ").onclick=()=>{
-    const text=document.getElementById("qText").value.trim(), categoryId=document.getElementById("qCat").value;
-    if(!text){toast("질문을 입력해 주세요.");return}
-    const id="q"+Date.now().toString(36);
-    questions.push({id,categoryId,text});save();toast("질문을 추가했어요.");renderManage();
-  };
-  document.getElementById("addCat").onclick=()=>{
-    const name=document.getElementById("newCat").value.trim();
-    if(!name){toast("카테고리 이름을 입력해 주세요.");return}
-    const id="c"+Date.now().toString(36);
-    categories.push({id,name});save();toast("카테고리를 추가했어요.");renderManage();
-  };
-  document.querySelectorAll("[data-rename]").forEach(b=>b.onclick=()=>{
-    const c=categories.find(x=>x.id===b.dataset.rename);if(!c)return;
-    const name=prompt("새 카테고리 이름",c.name);
-    if(name&&name.trim()){c.name=name.trim();save();renderManage();}
-  });
-  document.querySelectorAll("[data-delcat]").forEach(b=>b.onclick=()=>{
-    const c=categories.find(x=>x.id===b.dataset.delcat);if(!c)return;
-    const count=questions.filter(q=>q.categoryId===c.id).length;
-    if(!confirm(`"${c.name}" 카테고리를 삭제할까요?\n이 카테고리의 질문 ${count}개도 함께 삭제됩니다.`))return;
-    const ids=new Set(questions.filter(q=>q.categoryId===c.id).map(q=>q.id));
-    questions=questions.filter(q=>q.categoryId!==c.id);
-    ids.forEach(id=>favorites.delete(id));
-    categories=categories.filter(x=>x.id!==c.id);save();renderManage();
-  });
-  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
-    const q=questions.find(x=>x.id===b.dataset.del);if(!q)return;
-    if(confirm("이 질문을 삭제할까요?")){
-      questions=questions.filter(x=>x.id!==q.id);favorites.delete(q.id);save();renderManage();
+const manifestData = {
+  name: "Select Picker",
+  short_name: "Select",
+  start_url: window.location.pathname,
+  display: "standalone",
+  background_color: "#fdfbf7",
+  theme_color: "#fdfbf7",
+  icons: [
+    {
+      src: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 rx=%22110%22 fill=%22%238c6d53%22/><text x=%2250%%22 y=%2254%%22 font-size=%22260%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22>🎲</text></svg>",
+      sizes: "512x512",
+      type: "image/svg+xml"
     }
+  ]
+};
+const blob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+document.getElementById('manifestPlaceholder').href = URL.createObjectURL(blob);
+
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    self.addEventListener('install', e => { self.skipWaiting(); });
+    self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
+    self.addEventListener('fetch', e => { e.respondWith(fetch(e.request).catch(() => caches.match(e.request))); });
+  `;
+  const swBlob = new Blob([swCode], {type: 'application/javascript'});
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(err => console.log('SW registration failed:', err));
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById('installBtn');
+  if(installBtn) installBtn.style.display = 'block';
+});
+
+document.getElementById('installBtn')?.addEventListener('click', async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if(outcome === 'accepted') {
+    document.getElementById('installBtn').style.display = 'none';
+  }
+  deferredPrompt = null;
+});
+
+const KEY="select_picker_v5";
+const $=id=>document.getElementById(id);
+const uid=()=>Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,10);
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+
+let db;
+try{db=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){db=null}
+if(!db || !Array.isArray(db.sets) || !db.sets.length){
+  const first={id:uid(),name:"A세트",items:["카페 가기","도서관 가기","운동장 가기"],removed:[]};
+  db={sets:[first],active:first.id,mode:"random"};
+}
+if(!db.sets.some(s=>s.id===db.active)) db.active=db.sets[0].id;
+if(!db.mode) db.mode="random";
+
+let mode=db.mode;
+let busy=false;
+
+function save(){
+  db.mode=mode;
+  try{localStorage.setItem(KEY,JSON.stringify(db))}
+  catch(e){alert("브라우저 저장 기능을 사용할 수 없습니다.")}
+}
+function active(){return db.sets.find(s=>s.id===db.active)||db.sets[0]}
+
+function getRemovedSet(){
+  const s=active();
+  if(!s.removed) s.removed=[];
+  return new Set(s.removed);
+}
+
+function setRemovedSet(remSet){
+  const s=active();
+  s.removed=Array.from(remSet);
+  save();
+}
+
+function resetResult(){
+  if(mode!=="remove"){
+    setRemovedSet(new Set());
+  }
+  $("resultLabel").textContent="오늘의 결정";
+  $("resultText").textContent="결정이 필요하신가요?";
+  $("resultSub").textContent="고민은 여기까지.";
+  $("status").textContent="";
+}
+
+function render(){
+  const s=active();
+  const rem=getRemovedSet();
+
+  $("setSelect").innerHTML=db.sets.map(x=>
+    '<option value="'+esc(x.id)+'">'+esc(x.name)+" · "+x.items.length+"개</option>"
+  ).join("");
+  $("setSelect").value=s.id;
+  $("heroSet").textContent=s.name+" · "+s.items.length+"개";
+  $("heroMode").textContent=mode==="remove"?"✂️ 하나씩 제거":"🎲 랜덤 선택";
+  $("modeHelp").textContent=mode==="remove"?"뽑힌 항목을 하나씩 제외해 마지막 1개까지 좁힙니다.":"전체 항목에서 매번 무작위로 하나를 고릅니다.";
+
+  const alive=s.items.map((_,i)=>i).filter(i=>!rem.has(i));
+  $("itemCount").textContent=(mode==="remove"?"남은 "+alive.length+"개 · ":"")+"전체 "+s.items.length+"개";
+
+  $("items").innerHTML=s.items.length
+    ? s.items.map((x,i)=>'<div class="item '+(rem.has(i)?"removed":"")+'"><span class="name">'+esc(x)+'</span><span class="state">'+(rem.has(i)?"제거됨":"")+"</span></div>").join("")
+    : '<div class="empty" style="grid-column:1/-1">이 세트에는 항목이 없습니다.</div>';
+
+  $("resetRemoved").style.display=(mode==="remove" && rem.size)?"block":"none";
+  $("pickBtn").textContent="🎲 선택하기";
+  $("modeRandom").classList.toggle("active",mode==="random");
+  $("modeRemove").classList.toggle("active",mode==="remove");
+}
+
+function setMode(m){
+  if(busy)return;
+  mode=m;
+  if(mode!=="remove"){
+    setRemovedSet(new Set());
+  }
+  resetResult();
+  save();
+  render();
+}
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+async function pick(){
+  if(busy)return;
+  const s=active();
+  const rem=getRemovedSet();
+  const pool=s.items.map((_,i)=>i).filter(i=>mode==="random" || !rem.has(i));
+
+  if(!pool.length){
+    $("status").textContent="선택할 항목이 없습니다.";
+    return;
+  }
+
+  busy=true;
+  $("pickBtn").disabled=true;
+
+  for(const n of [3,2,1]){
+    $("resultLabel").textContent="선택 중";
+    $("resultText").textContent=n;
+    $("resultSub").textContent="";
+    await sleep(700);
+  }
+
+  const index=pool[Math.floor(Math.random()*pool.length)];
+  $("resultLabel").textContent="결정 완료";
+  $("resultText").textContent=s.items[index];
+
+  if(mode==="remove"){
+    rem.add(index);
+    setRemovedSet(rem);
+    $("resultSub").textContent="이 선택지는 제외했습니다. 계속 좁혀볼까요?";
+  }else{
+    $("resultSub").textContent="결정 완료. 고민 끝.";
+  }
+
+  render();
+  if(mode==="remove" && s.items.length-rem.size===1)
+    $("status").textContent="이제 마지막 1개가 남았습니다.";
+
+  busy=false;
+  $("pickBtn").disabled=false;
+}
+
+function closeModal(){$("modalBack").classList.remove("show")}
+function openModal(title,body){
+  $("modalTitle").textContent=title;
+  $("modalBody").innerHTML=body;
+  $("modalBack").classList.add("show");
+}
+
+function newSet(){
+  openModal("새 세트 만들기",
+    '<div class="manage-row">'+
+    '<input id="createName" class="input" placeholder="예: 주말 선택지">'+
+    '<button class="btn primary" id="createNow">만들기</button>'+
+    '</div>');
+  const input=$("createName");
+  const create=()=>{
+    const name=input.value.trim();
+    if(!name){input.focus();return}
+    const s={id:uid(),name,items:[],removed:[]};
+    db.sets.push(s);
+    db.active=s.id;
+    save();
+    mode="random";
+    render();
+    closeModal();
+    openItems(s.id);
+  };
+  $("createNow").onclick=create;
+  input.onkeydown=e=>{if(e.key==="Enter")create()};
+  setTimeout(()=>input.focus(),30);
+}
+
+function openSets(){
+  openModal("세트 관리",
+    '<div class="manage-row">'+
+    '<input id="newSetName" class="input" placeholder="새 세트 이름">'+
+    '<button class="btn primary" id="createSet">추가</button>'+
+    '</div>'+
+    '<div id="setList"></div>');
+  renderSetList();
+
+  const input=$("newSetName");
+  const add=()=>{
+    const name=input.value.trim();
+    if(!name){input.focus();return}
+    const s={id:uid(),name,items:[],removed:[]};
+    db.sets.push(s);
+    db.active=s.id;
+    save();
+    mode="random";
+    render();
+    closeModal();
+    openItems(s.id);
+  };
+  $("createSet").onclick=add;
+  input.onkeydown=e=>{if(e.key==="Enter")add()};
+}
+
+function renderSetList(){
+  const list=$("setList");
+  if(!list)return;
+  list.innerHTML=db.sets.map(s=>
+    '<div class="set-card">'+
+      '<div><div class="set-name">'+esc(s.name)+'</div><div class="set-count">'+s.items.length+"개 항목</div></div>"+
+      '<div class="set-actions">'+
+        '<button class="small" data-action="load" data-id="'+esc(s.id)+'">불러오기</button>'+
+        '<button class="small" data-action="items" data-id="'+esc(s.id)+'">항목 편집</button>'+
+        '<button class="small" data-action="rename" data-id="'+esc(s.id)+'">이름</button>'+
+        '<button class="small" data-action="delete" data-id="'+esc(s.id)+'">삭제</button>'+
+      '</div>'+
+    '</div>'
+  ).join("");
+}
+
+function openItems(id){
+  const s=db.sets.find(x=>x.id===id);
+  if(!s)return;
+
+  openModal("항목 편집",
+    '<div class="manage-row">'+
+      '<input id="newItem" class="input" placeholder="새 선택 항목">'+
+      '<button class="btn primary" id="addItem">추가</button>'+
+    '</div>'+
+    '<div id="editList"></div>'
+  );
+  renderEditList(id);
+
+  const input=$("newItem");
+  const add=()=>{
+    const value=input.value.trim();
+    if(!value){input.focus();return}
+    s.items.push(value);
+    s.removed=[];
+    save();
+    input.value="";
+    render();
+    renderEditList(id);
+    input.focus();
+  };
+  $("addItem").onclick=add;
+  input.onkeydown=e=>{if(e.key==="Enter")add()};
+}
+
+function renderEditList(id){
+  const s=db.sets.find(x=>x.id===id);
+  const list=$("editList");
+  if(!s||!list)return;
+
+  list.innerHTML=s.items.length
+    ? s.items.map((x,i)=>
+      '<div class="edit-item">'+
+        '<input class="input edit-name" data-i="'+i+'" value="'+esc(x)+'">'+
+        '<button class="small" data-del-item="'+i+'">×</button>'+
+      '</div>'
+    ).join("")
+    : '<div class="empty">아직 항목이 없습니다.</div>';
+
+  list.querySelectorAll(".edit-name").forEach(input=>{
+    input.onchange=()=>{
+      const i=Number(input.dataset.i);
+      const value=input.value.trim();
+      if(value)s.items[i]=value;
+      save();render();
+    };
   });
-  document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{
-    const q=questions.find(x=>x.id===b.dataset.edit);if(!q)return;
-    const next=prompt("질문 수정",q.text);
-    if(next!==null && next.trim()){q.text=next.trim();save();renderManage();}
+
+  list.querySelectorAll("[data-del-item]").forEach(btn=>{
+    btn.onclick=()=>{
+      s.items.splice(Number(btn.dataset.delItem),1);
+      s.removed=[];
+      save();render();renderEditList(id);
+    };
   });
 }
+
 function exportBackup(){
-  const data={
-    app:"Q&A",
+  const payload={
+    app:"Select",
     version:1,
     exportedAt:new Date().toISOString(),
-    categories,
-    questions,
-    favorites:[...favorites]
+    presets:{sets:db.sets,active:db.active,mode:mode}
   };
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json;charset=utf-8"});
-  const url=URL.createObjectURL(blob),a=document.createElement("a");
-  const d=new Date(), stamp=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-  a.href=url;a.download=`qa-backup-${stamp}.json`;a.click();URL.revokeObjectURL(url);
-  toast("백업 파일을 만들었어요.");
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const stamp=new Date().toISOString().slice(0,10).replaceAll("-","");
+  a.href=url;a.download="Select_presets_"+stamp+".json";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  $("status").textContent="프리셋 백업 파일을 만들었습니다.";
 }
 
-function importBackup(e){
-  const file=e.target.files?.[0];
+function importBackupFile(file){
   if(!file)return;
   const reader=new FileReader();
   reader.onload=()=>{
     try{
       const data=JSON.parse(reader.result);
-      if(!Array.isArray(data.categories)||!Array.isArray(data.questions)||!Array.isArray(data.favorites)) throw new Error();
-      if(!confirm("현재 질문·카테고리·즐겨찾기를 백업 파일 내용으로 교체할까요?"))return;
-      categories=data.categories;questions=data.questions;favorites=new Set(data.favorites);currentQuestionId=null;
-      save();toast("백업을 가져왔어요.");setView("manage");
-    }catch(err){alert("올바른 Q&A 백업 JSON 파일이 아닙니다.");}
-    e.target.value="";
+      const p=data && data.presets;
+      if(!p || !Array.isArray(p.sets) || !p.sets.length) throw new Error("invalid");
+      const cleanSets=p.sets.map(s=>({
+        id:String(s.id||uid()),
+        name:String(s.name||"이름 없는 세트"),
+        items:Array.isArray(s.items)?s.items.map(x=>String(x)):[],
+        removed:[]
+      }));
+      if(!confirm("현재 프리셋을 백업 파일의 내용으로 교체할까요?"))return;
+      db.sets=cleanSets;
+      db.active=cleanSets.some(s=>s.id===p.active)?p.active:cleanSets[0].id;
+      mode=p.mode==="remove"?"remove":"random";
+      save();resetResult();render();
+      $("status").textContent="프리셋을 가져왔습니다.";
+    }catch(e){alert("올바른 Select 프리셋 백업 파일이 아닙니다.");}
+    $("importFile").value="";
   };
-  reader.readAsText(file,"utf-8");
+  reader.readAsText(file);
 }
 
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>setView(b.dataset.view));
-document.querySelectorAll("[data-mobile-view]").forEach(b=>b.onclick=()=>setView(b.dataset.mobileView));
-setView("random");
+$("exportBackup").onclick=exportBackup;
+$("importBackup").onclick=()=>$("importFile").click();
+$("importFile").onchange=e=>importBackupFile(e.target.files[0]);
+
+$("setSelect").onchange=e=>{
+  db.active=e.target.value;
+  resetResult();
+  save();render();
+};
+
+$("modeRandom").onclick=()=>setMode("random");
+$("modeRemove").onclick=()=>setMode("remove");
+$("pickBtn").onclick=pick;
+
+$("resetRemoved").onclick=()=>{
+  setRemovedSet(new Set());
+  resetResult();
+  render();
+  $("status").textContent="제거된 항목을 모두 되돌렸습니다.";
+};
+
+$("manageSets").onclick=openSets;
+$("newSet").onclick=newSet;
+$("closeModal").onclick=closeModal;
+$("modalBack").onclick=e=>{if(e.target===$("modalBack"))closeModal()};
+
+$("modalBody").addEventListener("click",e=>{
+  const btn=e.target.closest("button[data-action]");
+  if(!btn)return;
+
+  const id=btn.dataset.id;
+  const s=db.sets.find(x=>x.id===id);
+  if(!s)return;
+
+  if(btn.dataset.action==="load"){
+    db.active=id;
+    resetResult();
+    save();render();closeModal();
+  }
+
+  if(btn.dataset.action==="items")openItems(id);
+
+  if(btn.dataset.action==="rename"){
+    const name=prompt("세트 이름을 수정하세요.",s.name);
+    if(name!==null && name.trim()){
+      s.name=name.trim();
+      save();render();renderSetList();
+    }
+  }
+
+  if(btn.dataset.action==="delete"){
+    if(db.sets.length<=1){
+      alert("세트가 하나뿐이라 삭제할 수 없습니다.");
+      return;
+    }
+    if(confirm('"'+s.name+'" 세트를 삭제할까요?')){
+      db.sets=db.sets.filter(x=>x.id!==id);
+      if(db.active===id)db.active=db.sets[0].id;
+      save();render();renderSetList();
+    }
+  }
+});
+
+render();
+})();
 </script>
 </body>
 </html>
